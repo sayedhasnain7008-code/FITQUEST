@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FITQUEST – Smart Student Fitness & Activity Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:inherit}
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --font-display:'Bricolage Grotesque','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --font-body:'Figtree','Segoe UI',system-ui,-apple-system,sans-serif;
+  --bg:#F3F5FB;--surface:#FFFFFF;--surface2:#EAEEF9;--ink:#0F1535;--ink2:#4A5478;--line:#DDE2F1;
+  --primary:#3B4BFF;--primary-soft:#E3E6FF;--on-primary:#FFFFFF;
+  --sun:#FFB800;--sun-soft:#FFF1CC;--flame:#FF6B3D;--flame-soft:#FFE6DC;
+  --mint:#0FA57A;--mint-soft:#D9F6EA;--rose:#D93B46;--rose-soft:#FDE4E6;
+  --shadow:0 1px 2px rgba(15,21,53,.06),0 10px 28px -14px rgba(15,21,53,.22);
+  --r-lg:28px;--r-md:18px;--r-sm:12px;
+  color-scheme:light;
+}         
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B0F22;--surface:#141A36;--surface2:#1D2449;--ink:#EAEEFF;--ink2:#A3ADD6;--line:#2A3363;
+    --primary:#7482FF;--primary-soft:#232B63;--on-primary:#0B0F22;
+    --sun-soft:#3A2F10;--flame-soft:#3D2218;--mint:#33D6A6;--mint-soft:#0F3A30;--rose:#FF7A83;--rose-soft:#3F1B20;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.6);color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B0F22;--surface:#141A36;--surface2:#1D2449;--ink:#EAEEFF;--ink2:#A3ADD6;--line:#2A3363;
+  --primary:#7482FF;--primary-soft:#232B63;--on-primary:#0B0F22;
+  --sun-soft:#3A2F10;--flame-soft:#3D2218;--mint:#33D6A6;--mint-soft:#0F3A30;--rose:#FF7A83;--rose-soft:#3F1B20;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.6);color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-font-smoothing:antialiased;min-height:100vh}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0;letter-spacing:-.025em;line-height:1.08}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+a{color:var(--primary)}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px;border-radius:8px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--primary);color:var(--on-primary);padding:8px 14px;border-radius:8px;z-index:200}
+.skip:focus{left:8px}
+.ic{flex:none}
+.muted{color:var(--ink2)}
+.small{font-size:13.5px}
+.tiny{font-size:12px}
+.row{display:flex;align-items:center;gap:12px}
+.wrap{flex-wrap:wrap}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.stack{display:flex;flex-direction:column;gap:12px}
+.center{text-align:center}
+.hidden{display:none!important}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:999px;border:1.5px solid transparent;font-weight:650;font-size:15px;background:var(--surface2);color:var(--ink);transition:transform .15s,filter .15s,background .15s;text-decoration:none;white-space:nowrap}
+.btn:hover{filter:brightness(.97)}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--primary);color:var(--on-primary)}
+.btn-sun{background:var(--sun);color:#1c1500}
+.btn-mint{background:var(--mint);color:#04140e}
+.btn-line{background:transparent;border-color:var(--line)}
+.btn-sm{min-height:38px;padding:0 15px;font-size:13.5px}
+.btn-lg{min-height:58px;padding:0 32px;font-size:17px}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.iconbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;position:relative}
+.iconbtn .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:var(--flame);border:2px solid var(--surface)}
+.link{background:none;border:0;padding:0;color:var(--primary);font-weight:650;text-decoration:underline;text-underline-offset:3px}
+
+/* surfaces */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:22px;box-shadow:var(--shadow)}
+.card.flat{box-shadow:none}
+.card.sm{border-radius:var(--r-md);padding:16px}
+.card h3{font-size:19px;margin-bottom:4px}
+.tile{background:var(--surface2);border-radius:var(--r-md);padding:14px 16px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:650;background:var(--surface2);color:var(--ink2)}
+.pill.primary{background:var(--primary-soft);color:var(--primary)}
+.pill.sun{background:var(--sun-soft);color:#8a6200}
+.pill.mint{background:var(--mint-soft);color:var(--mint)}
+.pill.flame{background:var(--flame-soft);color:var(--flame)}
+.pill.rose{background:var(--rose-soft);color:var(--rose)}
+:root[data-theme="dark"] .pill.sun{color:var(--sun)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.sun{color:var(--sun)}}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;min-height:40px;padding:0 16px;font-weight:600;font-size:14px}
+.chip[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.bar{height:10px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--primary);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.bar.mint>i{background:var(--mint)}.bar.sun>i{background:var(--sun)}.bar.flame>i{background:var(--flame)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:650;font-size:14px}
+.field input,.field select,.field textarea{min-height:48px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);padding:0 14px}
+.field textarea{padding:12px 14px;min-height:80px}
+.field .hint{font-size:12.5px;color:var(--ink2)}
+.seg{display:inline-flex;background:var(--surface2);border-radius:999px;padding:4px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;min-height:38px;padding:0 16px;border-radius:999px;font-weight:650;font-size:14px;color:var(--ink2)}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.sw{width:52px;height:30px;border-radius:99px;border:0;background:var(--line);position:relative;flex:none;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw[aria-checked="true"]{background:var(--mint)}
+.sw[aria-checked="true"]::after{transform:translateX(22px)}
+.notice{border-radius:var(--r-md);padding:14px 16px;background:var(--sun-soft);display:flex;gap:12px;align-items:flex-start;font-size:14px}
+.notice.mint{background:var(--mint-soft)}
+.notice.primary{background:var(--primary-soft)}
+.empty{border:2px dashed var(--line);border-radius:var(--r-md);padding:26px;text-align:center;color:var(--ink2)}
+
+/* rings & charts */
+.ringw{position:relative;flex:none}
+.ringw svg{display:block}
+.rin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.rfill{animation:ringin .9s cubic-bezier(.2,.8,.2,1)}
+@keyframes ringin{from{stroke-dashoffset:var(--c)}}
+.bars{display:flex;align-items:flex-end;gap:8px;height:calc(var(--h,120px) + 44px);padding-top:6px}
+.bcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;min-width:0}
+.bbar{width:100%;max-width:34px;border-radius:10px 10px 4px 4px;background:var(--primary-soft);transform-origin:bottom;animation:grow .7s cubic-bezier(.2,.8,.2,1)}
+.bcol.hi .bbar{background:var(--primary)}
+.bval{font-size:11px;color:var(--ink2);font-weight:650;min-height:14px}
+.blab{font-size:11.5px;color:var(--ink2)}
+@keyframes grow{from{transform:scaleY(0)}}
+.line{width:100%;height:auto;display:block}
+.donut{width:120px;height:120px;border-radius:50%;position:relative;flex:none}
+.donut::after{content:"";position:absolute;inset:26px;border-radius:50%;background:var(--surface)}
+.hbar{display:grid;grid-template-columns:110px 1fr 44px;align-items:center;gap:10px;font-size:14px}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dots i{width:22px;height:22px;border-radius:7px;background:var(--surface2);display:block}
+.dots i.on{background:var(--mint)}
+.dots i.today{outline:2px solid var(--primary);outline-offset:1px}
+
+/* badges */
+.badge{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;width:96px;flex:none;background:none;border:0;padding:0}
+.hex{width:68px;height:76px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:grid;place-items:center;font-size:30px;background:var(--bc,var(--primary))}
+.badge.locked .hex{background:var(--surface2);filter:grayscale(1);opacity:.6}
+.badge span{font-size:12.5px;font-weight:650;line-height:1.2}
+.badge.pop .hex{animation:pop .7s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(.3) rotate(-20deg)}100%{transform:none}}
+.badges{display:flex;gap:14px;overflow-x:auto;padding:6px 2px 10px;scrollbar-width:thin}
+
+/* shell */
+.shell{min-height:100vh}
+.side{display:none}
+.mainwrap{min-width:0}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;display:flex;align-items:center;gap:10px;padding:12px 16px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.top .brand-m{display:flex;align-items:center;gap:8px}
+.main{padding:8px 16px 140px;max-width:1120px;margin:0 auto}
+.view-h{margin:10px 0 18px}
+.view-h h1{font-size:clamp(28px,5vw,40px)}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:var(--surface);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+.bnav button{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;font-weight:650;color:var(--ink2);min-height:52px;border-radius:14px}
+.bnav button[aria-current="page"]{color:var(--primary)}
+.fab{position:fixed;right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:41;min-height:56px;padding:0 24px;border-radius:999px;border:0;background:var(--primary);color:var(--on-primary);font-weight:750;font-size:16px;display:flex;align-items:center;gap:8px;box-shadow:0 12px 28px -8px rgba(59,75,255,.6)}
+.chips-top{display:flex;gap:8px;margin-left:auto;align-items:center}
+.stat-chip{display:none;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font-weight:700;font-size:14px}
+@media(min-width:520px){.stat-chip{display:inline-flex}}
+@media(min-width:900px){
+  .shell{display:grid;grid-template-columns:260px 1fr}
+  .side{display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh;padding:22px 16px;border-right:1px solid var(--line);background:var(--surface)}
+  .bnav,.fab,.top .brand-m{display:none}
+  .main{padding:8px 32px 60px}
+  .top{padding:16px 32px}
+}
+.side .nv{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 14px;border-radius:14px;border:0;background:none;font-weight:650;color:var(--ink2);text-align:left;width:100%}
+.side .nv:hover{background:var(--surface2)}
+.side .nv[aria-current="page"]{background:var(--primary-soft);color:var(--primary)}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-.02em;padding:4px 8px 16px}
+
+/* home hero */
+.hero-card{background:linear-gradient(135deg,var(--primary) 0%,#5B3BFF 100%);color:#fff;border:0;position:relative;overflow:hidden}
+.hero-card::before{content:"";position:absolute;right:-120px;top:-120px;width:340px;height:340px;border-radius:50%;border:34px solid rgba(255,255,255,.07)}
+.hero-card::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;border:34px solid rgba(255,255,255,.07)}
+.hero-card .muted{color:rgba(255,255,255,.78)}
+.hero-card .btn-primary{background:#fff;color:#2a35c8}
+.hero-card .rin{color:#fff}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat b{font-family:var(--font-display);font-size:30px;letter-spacing:-.03em;line-height:1}
+.ch-item{display:flex;align-items:center;gap:14px;padding:12px;border-radius:var(--r-md);background:var(--surface2)}
+.ch-item.done{background:var(--mint-soft)}
+.ch-item .em{width:46px;height:46px;border-radius:14px;background:var(--surface);display:grid;place-items:center;font-size:24px;flex:none}
+.ch-check{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center;flex:none;color:transparent}
+.ch-item.done .ch-check{background:var(--mint);border-color:var(--mint);color:#fff}
+.act-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.act-row:last-child{border-bottom:0}
+.act-row .em{width:42px;height:42px;border-radius:12px;background:var(--surface2);display:grid;place-items:center;font-size:21px;flex:none}
+.mood{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mood button{border:1.5px solid var(--line);background:var(--surface);border-radius:16px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12.5px;font-weight:650;min-height:64px}
+.mood button span{font-size:24px}
+.mood button[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft)}
+.lib-card{cursor:pointer;text-align:left;width:100%;display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:16px;transition:transform .15s,border-color .15s}
+.lib-card:hover{transform:translateY(-2px);border-color:var(--primary)}
+.lib-card .em{font-size:30px}
+.typegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.typegrid button{border:1.5px solid var(--line);background:var(--surface);border-radius:16px;padding:12px 6px;min-height:84px;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:650;font-size:13px}
+.typegrid button span{font-size:26px}
+.typegrid button[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft)}
+
+/* leaderboard */
+.lb{display:flex;flex-direction:column;gap:8px}
+.lb-row{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line)}
+.lb-row.me{background:var(--primary-soft);border-color:var(--primary)}
+.lb-rank{font-family:var(--font-display);font-weight:800;font-size:20px;text-align:center}
+.lb-row .meta{font-size:12.5px;color:var(--ink2);display:flex;gap:10px;flex-wrap:wrap}
+.lb-pts{font-family:var(--font-display);font-weight:800;font-size:20px;text-align:right}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;flex:none}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
+.tbl th{font-size:12.5px;color:var(--ink2);font-weight:650}
+.tbl-wrap{overflow-x:auto}
+
+/* chat */
+.chat{display:flex;flex-direction:column;gap:12px;max-height:52vh;overflow:auto;padding:4px 2px}
+.msg{max-width:88%;padding:12px 16px;border-radius:20px;font-size:15px}
+.msg.ai{background:var(--surface2);border-bottom-left-radius:6px;align-self:flex-start}
+.msg.me{background:var(--primary);color:var(--on-primary);border-bottom-right-radius:6px;align-self:flex-end}
+.plan{margin-top:10px;background:var(--surface);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;color:var(--ink)}
+.typing i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ink2);margin:0 2px;animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+/* layers */
+.scrim{position:fixed;inset:0;z-index:100;background:rgba(8,12,32,.6);display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.sheet{background:var(--surface);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:28px 28px 0 0;padding:24px 22px calc(28px + env(safe-area-inset-bottom,0px));animation:up .3s cubic-bezier(.2,.9,.3,1)}
+@media(min-width:700px){.scrim{align-items:center}.sheet{border-radius:28px;padding-bottom:28px}}
+.sheet.wide{max-width:820px}
+.sheet .x{position:sticky;top:0;float:right;margin:-8px -8px 0 0}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@keyframes fade{from{opacity:0}}
+#toasts{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 12px);z-index:150;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 12px}
+.toast{background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-weight:650;font-size:14.5px;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);animation:toast .35s cubic-bezier(.2,1.4,.4,1);display:flex;gap:8px;align-items:center}
+@keyframes toast{from{transform:translateY(-20px) scale(.9);opacity:0}}
+.banner{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 66px);z-index:60;max-width:640px;margin:0 auto;background:var(--surface);border:2px solid var(--mint);border-radius:22px;padding:16px;box-shadow:0 20px 40px -16px rgba(0,0,0,.4);animation:toast .4s cubic-bezier(.2,1.4,.4,1)}
+.confetti{position:fixed;top:-12px;width:9px;height:14px;z-index:160;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
+.notif{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.notif:last-child{border:0}
+.notif .em{width:38px;height:38px;border-radius:12px;background:var(--surface2);display:grid;place-items:center;flex:none}
+.notif.unread .em{background:var(--primary-soft)}
+.timer-big{font-family:var(--font-display);font-size:54px;font-weight:800;letter-spacing:-.04em}
+.step-li{display:flex;gap:12px;align-items:flex-start}
+.step-li b{width:26px;height:26px;border-radius:50%;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-size:13px;flex:none}
+.dir-item{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.dir-item:last-child{border:0}
+.dir-n{width:30px;height:30px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.dir-item.ok .dir-n{background:var(--mint);color:#04140e}
+
+/* landing */
+.land{overflow-x:clip}
+.l-nav{display:flex;align-items:center;justify-content:space-between;max-width:1160px;margin:0 auto;padding:16px 20px}
+.l-hero{position:relative;max-width:1160px;margin:0 auto;padding:36px 20px 70px;display:grid;gap:40px;align-items:center}
+@media(min-width:900px){.l-hero{grid-template-columns:1.15fr .85fr;padding-top:60px}}
+.l-hero h1{font-size:clamp(46px,9vw,92px);font-weight:800;line-height:.98;letter-spacing:-.045em}
+.l-hero h1 span{display:block}
+.l-sub{font-size:clamp(17px,2.4vw,21px);color:var(--ink2);max-width:34em;margin:22px 0 30px}
+.lanes{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.lanes svg{position:absolute;right:-18%;top:-40%;width:110%;opacity:.5}
+.phone{width:min(100%,340px);margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:40px;padding:22px;box-shadow:0 30px 60px -24px rgba(59,75,255,.45);display:flex;flex-direction:column;gap:14px}
+.phone .li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--surface2);font-weight:600;font-size:14px;transition:background .3s}
+.phone .li i{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:transparent;font-style:normal;font-size:13px;transition:all .3s;flex:none}
+.phone .li.done{background:var(--mint-soft)}
+.phone .li.done i{background:var(--mint);border-color:var(--mint);color:#fff}
+.ptspop{position:absolute;right:16px;top:10px;font-weight:800;color:var(--flame);opacity:0;transition:all .5s}
+.ptspop.on{opacity:1;transform:translateY(-10px)}
+.sect{max-width:1160px;margin:0 auto;padding:60px 20px}
+.sect h2{font-size:clamp(30px,5vw,48px);max-width:16em}
+.sect .lead{color:var(--ink2);margin-top:12px;max-width:40em;font-size:17px}
+.pfip{display:grid;gap:0;margin-top:30px;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--surface)}
+@media(min-width:800px){.pfip{grid-template-columns:repeat(4,1fr)}}
+.pfip>div{padding:26px;border-bottom:1px solid var(--line)}
+@media(min-width:800px){.pfip>div{border-bottom:0;border-right:1px solid var(--line)}.pfip>div:last-child{border-right:0}}
+.pfip h3{font-size:22px;margin-bottom:8px}
+.feat{display:flex;flex-direction:column;gap:10px}
+.feat .em{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:26px}
+.steps6{display:grid;gap:14px;margin-top:30px;counter-reset:s}
+@media(min-width:800px){.steps6{grid-template-columns:repeat(3,1fr)}}
+.steps6>div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:20px;position:relative}
+.steps6 b{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--primary);color:var(--on-primary);font-family:var(--font-display);margin-bottom:12px}
+.l-foot{max-width:1160px;margin:0 auto;padding:30px 20px 60px;color:var(--ink2);font-size:14px;border-top:1px solid var(--line)}
+
+/* auth / onboarding */
+.center-page{min-height:100vh;display:grid;place-items:center;padding:20px}
+.auth-card{width:100%;max-width:480px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:16px;padding:14px 16px;min-height:56px;font-weight:600}
+.opt[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft)}
+.opt .em{font-size:22px}
+.prog{display:flex;gap:6px;margin-bottom:22px}
+.prog i{flex:1;height:6px;border-radius:9px;background:var(--surface2)}
+.prog i.on{background:var(--primary)}
+.err{color:var(--rose);font-size:14px;font-weight:600}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div id="root"></div>
+<div id="banner-slot"></div>
+<div id="layer"></div>
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   FITQUEST – single-file prototype. All data is local (no external APIs).
+   ===================================================================== */
+
+/* ---------- utils ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const dk=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parseK=k=>{const p=k.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);};
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+const TODAY=()=>dk(new Date());
+const weekStart=(d=new Date())=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x;};
+const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], DOWF=['Sundays','Mondays','Tuesdays','Wednesdays','Thursdays','Fridays','Saturdays'], MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const uid=()=>Math.random().toString(36).slice(2,9);
+const hashS=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;};
+const rng=seed=>()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+const store={get(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}},del(k){try{localStorage.removeItem(k);}catch(e){}}};
+const fmtDate=k=>{if(k===TODAY())return 'Today';if(k===dk(addD(new Date(),-1)))return 'Yesterday';const d=parseK(k);return DOW[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()];};
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const plural=(n,w)=>n+' '+w+(n===1?'':'s');
+
+/* ---------- icons ---------- */
+const IC={
+ home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+ act:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+ flag:'<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
+ trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0z"/><path d="M17 5h3v2a3 3 0 01-3 3M7 5H4v2a3 3 0 003 3"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+ bell:'<path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21h4"/>',
+ shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+ flame:'<path d="M12 2c1 4 6 6 6 12a6 6 0 01-12 0c0-3 2-4 3-6 1 2 2 2 3-6z"/>',
+ play:'<path d="M7 4l13 8-13 8z"/>',
+ pause:'<path d="M8 4v16M16 4v16"/>',
+ check:'<path d="M4 12l5 5L20 6"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ spark:'<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5 7-5s7 1.5 7 5"/><path d="M16 4.5a3.5 3.5 0 010 7M18 15c2.5.5 4 2 4 5"/>',
+ cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',
+ moon:'<path d="M20 14A8 8 0 1110 4a7 7 0 0010 10z"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 018 0v3"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ drop:'<path d="M12 3s6 6.5 6 11a6 6 0 01-12 0c0-4.5 6-11 6-11z"/>',
+ cup:'<path d="M4 8h13v6a5 5 0 01-5 5H9a5 5 0 01-5-5z"/><path d="M17 10h2a2 2 0 010 4h-2M8 3v2M12 3v2"/>',
+ back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+ eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ gauge:'<path d="M12 14l4-5"/><path d="M4 18a9 9 0 1116 0"/>'
+};
+const ico=(n,s=20)=>'<svg class="ic" width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(IC[n]||'')+'</svg>';
+const logoSvg=(s=30)=>'<svg width="'+s+'" height="'+s+'" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="var(--surface2)" stroke-width="5"/><circle cx="16" cy="16" r="13" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round" stroke-dasharray="82" stroke-dashoffset="24" transform="rotate(-90 16 16)"/><circle cx="26" cy="9" r="3.4" fill="var(--sun)"/></svg>';
+
+/* ---------- reference data ---------- */
+const TYPES={
+ walking:{n:'Walking',e:'🚶',spm:110,dist:true,kmh:4.6},
+ running:{n:'Running',e:'🏃',spm:160,dist:true,kmh:8},
+ cycling:{n:'Cycling',e:'🚴',spm:0,dist:true,kmh:14},
+ sports:{n:'Sports',e:'⚽',spm:60},
+ gym:{n:'Gym',e:'🏋️',spm:0},
+ yoga:{n:'Yoga / stretching',e:'🧘',spm:0},
+ other:{n:'Other',e:'✨',spm:20}
+};
+const PREF_OPTS=[
+ {n:'Walking',e:'🚶',tags:['walking'],type:'walking'},{n:'Running',e:'🏃',tags:['running'],type:'running'},
+ {n:'Cycling',e:'🚴',tags:['cycling'],type:'cycling'},{n:'Sports',e:'⚽',tags:['sports'],type:'sports'},
+ {n:'Gym / strength',e:'🏋️',tags:['strength'],type:'gym'},{n:'Yoga & stretching',e:'🧘',tags:['stretching','mobility','yoga'],type:'yoga'},
+ {n:'Dance / indoor workouts',e:'💃',tags:['indoor'],type:'other'}
+];
+const GOALS=[
+ {n:'Move 100 minutes a week',w:100},{n:'Move 150 minutes a week',w:150},{n:'Build a daily habit (5 days a week)',w:150},{n:'Try something new every week',w:120}
+];
+const BADGES=[
+ {id:'first',n:'First Step',e:'👣',d:'Log your first activity',c:'#3B4BFF'},
+ {id:'streak7',n:'7-Day Streak',e:'🔥',d:'Be active 7 days in a row',c:'#FF6B3D'},
+ {id:'weekend',n:'Weekend Warrior',e:'🌤️',d:'Be active on both Saturday and Sunday',c:'#0FA57A'},
+ {id:'consistency',n:'Consistency Champion',e:'🏅',d:'Be active on 15 different days',c:'#8A5CF6'},
+ {id:'active',n:'Active Student',e:'🎓',d:'Reach your weekly activity goal',c:'#E89B00'},
+ {id:'challenge',n:'Challenge Completed',e:'✅',d:'Finish all 3 daily challenges in one day',c:'#12A4C8'},
+ {id:'team',n:'Team Player',e:'🤝',d:'Join a class or team challenge',c:'#E8489B'},
+ {id:'breaker',n:'Break Taker',e:'☕',d:'Complete 3 StudyBreaks',c:'#4C7DFF'}
+];
+const EVBADGES=[
+ {id:'ev-join',n:'Event Starter',e:'🎟️',d:'Join the campus fitness event',c:'#3B4BFF'},
+ {id:'ev-mover',n:'Team Mover',e:'🏃',d:'Log 3 activities during the event',c:'#0FA57A'},
+ {id:'ev-finish',n:'Week Finisher',e:'🏁',d:'Log 8 activities during the event',c:'#E89B00'}
+];
+const LEVELS=['Starter','Mover','Pacer','Trailblazer','Campus Legend'];
+const cat=(id,name,cats,type,min,diff,env,steps,safety)=>({id,name,cats,type,min,diff,env,steps,safety});
+const LIB=[
+ cat('easy-walk','Easy 10-minute walk',['Beginner','Walking','Outdoor'],'walking',10,'Beginner','Outdoor',['Choose a flat, familiar route.','Walk at a pace where you can still talk.','Keep your shoulders relaxed and swing your arms.'],'Wear comfortable shoes and stay aware of traffic.'),
+ cat('brisk-walk','Brisk campus walk',['Walking','Outdoor'],'walking',15,'Easy','Outdoor',['Warm up with 2 easy minutes.','Pick up the pace until you feel slightly warm.','Finish with 2 slow minutes.'],'Carry water on warm days and slow down if you feel unwell.'),
+ cat('walk-talk','Walk-and-talk with a friend',['Walking','Outdoor','Beginner'],'walking',20,'Beginner','Outdoor',['Invite a classmate to catch up on the move.','Keep a comfortable, steady pace.','Swap ideas or plan your next challenge together.'],'Stay on paths that are well lit and away from busy roads.'),
+ cat('sunrise-stroll','Evening or sunrise stroll',['Walking','Outdoor','Beginner'],'walking',25,'Beginner','Outdoor',['Choose a safe, well-lit loop near you.','Walk steadily and notice your surroundings.','Cool down by slowing for the last minutes.'],'Tell a friend where you are going if you walk alone.'),
+ cat('walk-run','Walk-run intervals',['Running','Beginner','Outdoor'],'running',20,'Easy','Outdoor',['Walk for 2 minutes to warm up.','Jog gently for 1 minute, then walk for 2.','Repeat 4 to 5 times and finish with a walk.'],'Stop and walk if you feel breathless, dizzy or in pain.'),
+ cat('easy-jog','Easy 20-minute jog',['Running','Outdoor'],'running',20,'Moderate','Outdoor',['Start with a 3-minute walk.','Jog at a pace where you can hold a conversation.','Walk for the last 3 minutes to cool down.'],'Build up slowly and rest if your legs feel sore.'),
+ cat('squats','Bodyweight squats',['Strength','Indoor','Beginner'],'gym',5,'Beginner','Indoor',['Stand with feet shoulder-width apart.','Sit your hips back and down as if into a chair.','Keep your chest up and knees over your toes, then stand.','Do 2 sets of 10 with a rest between.'],'Use a chair behind you for support if you need it.'),
+ cat('pushups','Wall or knee push-ups',['Strength','Indoor','Beginner'],'gym',5,'Beginner','Indoor',['Place hands on a wall or the floor, shoulder-width apart.','Lower your chest slowly, keeping your body in a line.','Press back up. Do 2 sets of 8 to 10.'],'Choose the wall version first. Stop if your wrists or shoulders hurt.'),
+ cat('bridges','Glute bridges',['Strength','Indoor'],'gym',6,'Easy','Indoor',['Lie on your back with knees bent and feet flat.','Press through your heels and lift your hips.','Hold for 2 seconds, then lower. Do 2 sets of 10.'],'Keep the movement smooth and avoid arching your lower back.'),
+ cat('plank','Short plank holds',['Strength','Indoor'],'gym',5,'Moderate','Indoor',['Rest on forearms and knees or toes.','Keep your body in a straight line.','Hold 15 to 20 seconds, rest, and repeat 3 times.'],'Drop to your knees or stop if your back feels strained.'),
+ cat('neck-shoulder','Neck and shoulder release',['Mobility','Stretching','Indoor','Beginner'],'yoga',5,'Beginner','Indoor',['Sit or stand tall.','Roll your shoulders back 10 times.','Gently tilt your ear toward each shoulder and hold 15 seconds.'],'Move slowly and never force the stretch.'),
+ cat('hip-flow','Hip opener flow',['Mobility','Indoor'],'yoga',8,'Easy','Indoor',['Step into a low lunge and hold 20 seconds.','Switch sides.','Finish with a gentle seated figure-four stretch.'],'Keep the stretch mild. You should feel tension, not pain.'),
+ cat('wrist-ankle','Desk wrist and ankle mobility',['Mobility','Indoor','Beginner'],'yoga',4,'Beginner','Indoor',['Circle your wrists 10 times each way.','Circle each ankle 10 times each way.','Open and close your hands 10 times.'],'Stay seated on a stable chair.'),
+ cat('full-stretch','Full-body stretch',['Stretching','Beginner','Indoor'],'yoga',10,'Beginner','Indoor',['Reach tall and stretch your arms overhead.','Fold forward gently with soft knees.','Stretch each side of your body for 20 seconds.'],'Never bounce. Breathe steadily throughout.'),
+ cat('hamstring-calf','Hamstring and calf stretch',['Stretching','Indoor'],'yoga',6,'Easy','Indoor',['Sit with one leg extended.','Reach toward your toes until you feel a mild stretch.','Hold 20 seconds, then switch legs.'],'Stop if you feel sharp pain behind the knee.'),
+ cat('back-stretch','Post-study back stretch',['Stretching','Mobility','Indoor','Beginner'],'yoga',5,'Beginner','Indoor',['Stand and place hands on your lower back.','Gently lean back a little and breathe.','Then round forward and hang your arms for 20 seconds.'],'Move within a comfortable range only.'),
+ cat('badminton','Badminton rally',['Sports','Outdoor','Indoor'],'sports',20,'Easy','Outdoor',['Find a partner and a court or open space.','Start with easy rallies.','Play a relaxed game, focusing on fun.'],'Warm up your shoulders first and wear supportive shoes.'),
+ cat('football','Passing and kickabout',['Sports','Outdoor'],'sports',25,'Moderate','Outdoor',['Warm up with a light jog.','Pass the ball with a partner.','Finish with a small friendly game.'],'Drink water regularly and rest between rounds.'),
+ cat('tt','Table tennis session',['Sports','Indoor'],'sports',15,'Easy','Indoor',['Start with slow rallies.','Practise forehand and backhand.','Play a friendly game to 11.'],'Keep the floor clear and wear grippy shoes.'),
+ cat('dorm-circuit','Dorm-room circuit',['Indoor','Strength','Beginner'],'gym',12,'Easy','Indoor',['Do 30 seconds of marching on the spot.','Add 10 squats and 8 wall push-ups.','Rest 30 seconds and repeat 3 rounds.'],'Use a non-slip surface and keep space around you.'),
+ cat('dance','Dance break',['Indoor','Beginner'],'other',10,'Beginner','Indoor',['Play 3 songs you love.','Move freely. There are no wrong steps.','Slow down and breathe during the last song.'],'Clear the floor and wear socks with grip or shoes.'),
+ cat('campus-loop','Campus loop walk',['Outdoor','Walking'],'walking',20,'Easy','Outdoor',['Pick a loop around your campus.','Keep a steady pace.','Try a slightly different route each day.'],'Stay on paths and use crossings.'),
+ cat('canteen-ride','Cycle to the canteen route',['Outdoor','Sports'],'cycling',15,'Easy','Outdoor',['Check your bike and helmet first.','Ride at a relaxed pace on quiet roads.','Take a slow last minute to cool down.'],'Wear a helmet, follow traffic rules and avoid headphones.')
+];
+const CATS=['All','Beginner','Walking','Running','Strength','Mobility','Stretching','Sports','Indoor','Outdoor'];
+const POOL=[
+ {id:'walk',t:n=>n+'-minute walk',type:'walking',base:10,unit:'min',tags:['walking'],out:true,e:'🚶'},
+ {id:'cycle',t:n=>n+'-minute cycling',type:'cycling',base:15,unit:'min',tags:['cycling'],out:true,e:'🚴'},
+ {id:'squats',t:n=>n+' squats',type:'gym',base:10,unit:'reps',mins:n=>Math.max(2,Math.ceil(n/5)),tags:['strength','indoor'],e:'🦵'},
+ {id:'pushups',t:n=>n+' push-ups (wall or knee is fine)',type:'gym',base:10,unit:'reps',mins:n=>Math.max(2,Math.ceil(n/5)),tags:['strength','indoor'],e:'💪'},
+ {id:'stretch',t:n=>n+'-minute stretching session',type:'yoga',base:8,unit:'min',tags:['stretching','mobility','yoga','indoor'],e:'🧘'},
+ {id:'outdoor',t:n=>n+'-minute outdoor activity',type:'sports',base:20,unit:'min',tags:['sports','running','outdoor'],out:true,e:'🌳'},
+ {id:'break',t:n=>n+'-minute movement break after studying',type:'yoga',base:5,unit:'min',tags:['study','mobility'],e:'📚'}
+];
+const BREAK_OPTS={
+ walk:{n:'Walk',e:'🚶',type:'walking',cues:['Stand up and head for a hallway, balcony or outdoor path.','Walk at an easy pace and let your arms swing.','Look at something far away to rest your eyes.','Roll your shoulders back as you walk.','Take three slow breaths and head back.']},
+ stretch:{n:'Stretch',e:'🧘',type:'yoga',cues:['Stand tall and reach both arms overhead.','Fold forward with soft knees and hang loose.','Stretch each side of your body for 20 seconds.','Open your chest by clasping hands behind you.','Finish with three slow breaths.']},
+ mobility:{n:'Mobility',e:'🔄',type:'yoga',cues:['Roll your shoulders backward 10 times.','Circle each wrist and ankle 10 times.','Gently tilt your head to each side and hold.','Open your hips with slow, easy leg swings.','Finish by standing tall and breathing slowly.']},
+ exercise:{n:'Short exercise',e:'⚡',type:'other',cues:['March on the spot for 60 seconds.','Do 10 easy squats. Use a chair for support if needed.','Do 8 wall push-ups.','March again and shake out your arms.','Breathe slowly until your heart rate settles.']}
+};
+const NICKS=['SprintSloth','NightOwlNeha','CodeAndCardio','ChaiRunner','PixelPacer','StepQueen','MechMover','HillHopper','YogaYash','BlueBeats','ZenZoya','DeskDodger','QuickKiran','MangoMiles','RollingRiya','BoltBala','PaperPlane','SunriseSam','CampusCyclist','TeaTimeTrek','LoopLaya','CricketCaptain','StairStar','MorningMira'];
+const CLASSES=['CSE A','CSE B','ECE A','CSE B','ME A','IT A','ECE B','IT B','EEE A','CE A'];
+const DEPTS=['CSE','ECE','ME','IT','EEE','CE'];
+const COLORS=['#3B4BFF','#0FA57A','#E8489B','#E89B00','#8A5CF6','#12A4C8','#FF6B3D'];
+const avColor=s=>COLORS[hashS(s)%COLORS.length];
+
+/* ---------- state ---------- */
+let S=null,SESSION=null,route='landing';
+let ui={actTab:'lib',cat:'All',q:'',chTab:'daily',lbScope:'college',lbMetric:'week',trend:'week',obStep:0,ob:{prefs:[]},authTab:'signup',authErr:'',adminOK:false,chat:null,demoSeen:{}};
+const clock={since:0,study:0,studyOn:false};
+let prev={};
+
+const DEFAULT_SET=()=>({useNick:true,showBoard:true,shareClass:true,remChallenge:true,remTime:'18:00',remBreak:true,breakEvery:45,remWeekly:true,fast:false});
+
+function makePeers(refW,refT,r){
+  return NICKS.map((nick,i)=>{const cl=CLASSES[i%CLASSES.length];
+    return {id:'p'+i,nick,cls:cl,dept:cl.split(' ')[0],
+      week:Math.max(15,Math.round(refW+(11-i)*16+(r()-.5)*22)),
+      total:Math.max(150,Math.round(refT+(11-i)*130+(r()-.5)*150)),
+      ch:Math.round(18+r()*90),streak:Math.round(r()*14)};});
+}
+function makeEvent(){const s=new Date();s.setHours(0,0,0,0);s.setDate(s.getDate()-2);const e=new Date();e.setDate(e.getDate()+4);e.setHours(20,0,0,0);
+  return {name:'FITQUEST College Fitness Week',start:s.getTime(),end:e.getTime(),joined:false,base:{participants:386,activities:1942},
+    teams:[['CSE',5240],['ECE',4710],['ME',4120],['IT',3980],['EEE',3260],['CE',2890]]};}
+function seedTeams(cls,peers){
+  const mem=(c,n)=>{const l=peers.filter(p=>p.cls===c).map(p=>({nick:p.nick,n:Math.round(2+Math.random()*6)}));const rest=peers.filter(p=>p.cls!==c).slice(0,Math.max(0,n-l.length)).map(p=>({nick:p.nick,n:Math.round(1+Math.random()*4)}));return l.concat(rest).slice(0,n);};
+  const day=(n,h=23)=>{const d=new Date();d.setDate(d.getDate()+n);d.setHours(h,59,0,0);return d.getTime();};
+  return [
+    {id:'t1',name:'CSE B – 7 Day Activity Challenge',cls:'CSE B',start:day(-3,0),end:day(4),target:60,done:34,pts:1720,members:mem('CSE B',14),joined:false,mine:false},
+    {id:'t2',name:'ECE A – Campus Cycle Week',cls:'ECE A',start:day(-1,0),end:day(6),target:40,done:12,pts:610,members:mem('ECE A',9),joined:false,mine:false},
+    {id:'t3',name:'Library Walkers – 10-Minute Walks',cls:'Open to all',start:day(-5,0),end:day(2),target:80,done:61,pts:2480,members:mem('IT A',18),joined:false,mine:false}
+  ];
+}
+function newState(user){
+  const r=rng(hashS(user.email||user.nick));
+  const peers=makePeers(90,900,r);
+  return {user:Object.assign({name:'',nick:'',dept:'CSE',cls:'CSE B',email:'',age:'',level:'',prefs:[],minutes:20,env:'Either',goal:GOALS[1].n,weeklyGoal:150,onboarded:false},user),
+    acts:[],ledger:[],badges:{},cdone:{},offered:{},daily:{},mood:{},breaks:[],notifs:[],peers,teams:seedTeams(user.cls,peers),event:makeEvent(),set:DEFAULT_SET(),demo:false};
+}
+function makeDemo(){
+  const r=rng(2026);
+  const S0=newState({name:'Aarav Sharma',nick:'StepSeeker',dept:'CSE',cls:'CSE B',email:'demo@fitquest.app',age:'19–21',level:'Lightly active',prefs:['Walking','Cycling','Yoga & stretching'],minutes:20,env:'Either',goal:GOALS[1].n,weeklyGoal:150,onboarded:true});
+  S0.demo=true;
+  const now=new Date(),types=['walking','walking','cycling','yoga','running','sports','gym','walking'];
+  const push=(date,type,min,src)=>{const t=TYPES[type];const dist=t.dist?+(t.kmh*min/60).toFixed(1):null;const pts=Math.min(100,10+min);
+    S0.acts.push({id:uid(),type,min,dist,date,pts,steps:Math.round(min*(t.spm||0)),src:src||'manual',note:''});S0.ledger.push({d:date,pts,why:t.n+' · '+min+' min'});};
+  for(let i=56;i>=1;i--){
+    const d=addD(now,-i),k=dk(d),dow=d.getDay();
+    let p=i<=6?1:(dow===0||dow===6?.8:.5); if(i===7)p=0;
+    if(r()<p){const ty=types[Math.floor(r()*types.length)];const mins=[15,20,25,30,35,45][Math.floor(r()*6)];push(k,ty,mins);
+      if(r()<.25){push(k,'yoga',10);} }
+    if(i<=14){S0.offered[k]=3;const dn=[2,2,1,2,2,1,2,2,1,2,2,2,1,2][i-1];S0.cdone[k]=['walk','stretch','squats'].slice(0,dn);
+      if(dn>0){S0.ledger.push({d:k,pts:dn*30,why:'Daily challenges'});}
+      if(r()<.65){S0.breaks.push(k);}}
+  }
+  // Tweak so this week's goal feels reachable for the demo
+  const wsk=dk(weekStart());const wmins=S0.acts.filter(a=>a.date>=wsk).reduce((s,a)=>s+a.min,0);
+  S0.user.weeklyGoal=Math.max(90,Math.round((wmins+55)/10)*10);
+  S0.badges={first:dk(addD(now,-50)),weekend:dk(addD(now,-20)),consistency:dk(addD(now,-25)),team:dk(addD(now,-3)),breaker:dk(addD(now,-9))};
+  const teams=S0.teams;teams[0].joined=true;teams[0].mine=true;teams[0].members.push({nick:'StepSeeker',n:6,me:true});
+  S0.notifs=[
+    {id:uid(),t:'Your daily challenges are ready. Today looks light and doable.',ic:'flag',time:'8:00 am',read:false},
+    {id:uid(),t:'CSE B is at 57% of the 7 Day Activity Challenge.',ic:'users',time:'Yesterday',read:false},
+    {id:uid(),t:'FITQUEST College Fitness Week is live. Join to earn event points.',ic:'trophy',time:'2 days ago',read:true}
+  ];
+  // peers relative to the demo user's weekly points
+  const wp=S0.ledger.filter(l=>l.d>=wsk).reduce((s,l)=>s+l.pts,0),tp=S0.ledger.reduce((s,l)=>s+l.pts,0);
+  S0.peers=makePeers(wp,tp,r);
+  return S0;
+}
+
+/* ---------- selectors / calculations ---------- */
+const myName=()=>(S.set.useNick||!S.user.name)?S.user.nick:S.user.name;
+const minsOn=k=>S.acts.filter(a=>a.date===k).reduce((s,a)=>s+a.min,0);
+const totalPts=()=>S.ledger.reduce((s,l)=>s+l.pts,0);
+const weekPts=()=>{const w=dk(weekStart());return S.ledger.filter(l=>l.d>=w).reduce((s,l)=>s+l.pts,0);};
+const chTotal=()=>Object.values(S.cdone).reduce((s,a)=>s+a.length,0);
+const activeDays=()=>new Set(S.acts.map(a=>a.date));
+function streak(){const s=activeDays();let d=new Date();if(!s.has(dk(d)))d=addD(d,-1);let n=0;while(s.has(dk(d))){n++;d=addD(d,-1);}return n;}
+function weekDays(){const ws=weekStart();return [0,1,2,3,4,5,6].map(i=>minsOn(dk(addD(ws,i))));}
+const weekMins=()=>weekDays().reduce((a,b)=>a+b,0);
+function level(){const t=totalPts(),i=Math.min(LEVELS.length-1,Math.floor(t/500));const lo=i*500,hi=(i+1)*500;return {i,name:LEVELS[i],pct:i===LEVELS.length-1?1:(t-lo)/(hi-lo),next:hi-t};}
+const baseSteps=k=>S.demo?1400+(hashS(k)%1500):0;
+const stepsOn=k=>baseSteps(k)+S.acts.filter(a=>a.date===k).reduce((s,a)=>s+(a.steps||0),0);
+const prefTags=()=>{const s=new Set();S.user.prefs.forEach(p=>{const o=PREF_OPTS.find(x=>x.n===p);if(o)o.tags.forEach(t=>s.add(t));});return s;};
+const prefTypes=()=>S.user.prefs.map(p=>{const o=PREF_OPTS.find(x=>x.n===p);return o&&o.type;}).filter(Boolean);
+function typeCounts(days=28){const from=dk(addD(new Date(),-days));const c={};S.acts.filter(a=>a.date>=from).forEach(a=>{c[a.type]=(c[a.type]||0)+1;});return c;}
+function weekendPair(days){for(const k of days){if(parseK(k).getDay()===6&&days.has(dk(addD(parseK(k),1))))return true;}return false;}
+function eventActs(){if(!S.event.joined)return [];const st=dk(new Date(S.event.start));return S.acts.filter(a=>a.date>=st);}
+
+function evalBadges(){
+  const A=S.acts,days=activeDays(),got=[];
+  const chk=(id,ok)=>{if(ok&&!S.badges[id]){S.badges[id]=TODAY();got.push(id);}};
+  chk('first',A.length>=1);chk('streak7',streak()>=7);chk('weekend',weekendPair(days));chk('consistency',days.size>=15);
+  chk('active',A.length>0&&weekMins()>=S.user.weeklyGoal);
+  chk('challenge',Object.values(S.cdone).some(a=>a.length>=3));
+  chk('team',S.teams.some(t=>t.joined));chk('breaker',S.breaks.length>=3);
+  const ev=eventActs().length;chk('ev-join',S.event.joined);chk('ev-mover',ev>=3);chk('ev-finish',ev>=8);
+  return got;
+}
+function save(){if(SESSION&&!S.demo)store.set('fq_data_'+SESSION,S);}
+function notify(t,ic='bell'){S.notifs.unshift({id:uid(),t,ic,time:'Just now',read:false});S.notifs=S.notifs.slice(0,30);}
+function addPts(pts,why,d=TODAY()){S.ledger.push({d,pts,why});}
+
+/* ---------- board ---------- */
+function board(scope,metric){
+  const me={id:'me',me:true,nick:myName(),cls:S.user.cls,dept:S.user.dept,week:weekPts(),total:totalPts(),ch:chTotal(),streak:streak()};
+  let rows=S.peers.map(p=>Object.assign({},p)).concat([me]);
+  if(scope==='class')rows=rows.filter(r=>r.cls===S.user.cls);
+  if(scope==='dept')rows=rows.filter(r=>r.dept===S.user.dept);
+  rows.sort((a,b)=>b[metric]-a[metric]);rows.forEach((r,i)=>r.rank=i+1);return rows;
+}
+const myRank=(scope='college',metric='week')=>board(scope,metric).find(r=>r.me).rank;
+function bumpPeers(n,lo=8,hi=35){for(let i=0;i<n;i++){const p=S.peers[Math.floor(Math.random()*S.peers.length)];const g=Math.round(lo+Math.random()*(hi-lo));p.week+=g;p.total+=g;if(Math.random()<.3)p.ch++;}}
+
+/* ---------- challenges ---------- */
+function adapt(){
+  let off=0,done=0;for(let i=1;i<=7;i++){const k=dk(addD(new Date(),-i));if(S.offered[k]){off+=S.offered[k];done+=(S.cdone[k]||[]).length;}}
+  if(off<6)return {f:1,label:'Starter',note:'Your challenges will adapt as you complete them.'};
+  const r=done/off;
+  if(r>=.8)return {f:1.25,label:'Stretch',note:'You completed most challenges last week, so today is a little bigger.'};
+  if(r<.4)return {f:.75,label:'Gentle',note:'Last week was busy, so today is a little lighter.'};
+  return {f:1,label:'Steady',note:'Based on your last 7 days, today stays at a steady level.'};
+}
+function genDaily(k){
+  const r=rng(hashS(k+S.user.nick)),ad=adapt(),tags=prefTags(),mood=S.mood[k];
+  const list=POOL.map(c=>{let s=r()*1.1;
+    if(c.tags.some(t=>tags.has(t)))s+=1.3;
+    if(S.user.env==='Indoor'&&c.out)s-=2.5; if(S.user.env==='Outdoor'&&c.out)s+=.8;
+    if(mood==='tired'&&['cycle','outdoor','pushups'].includes(c.id))s-=2.5;
+    if(mood==='great'&&['outdoor','cycle'].includes(c.id))s+=.6;
+    if(S.user.minutes<=10&&c.unit==='min'&&c.base>=15)s-=1.5;
+    if(c.id==='break')s-=.3;return {c,s};}).sort((a,b)=>b.s-a.s);
+  const picks=[];const seenType=new Set();
+  for(const x of list){if(picks.length>=3)break;if(seenType.has(x.c.type)&&picks.length<2)continue;picks.push(x.c);seenType.add(x.c.type);}
+  for(const x of list){if(picks.length>=3)break;if(!picks.includes(x.c))picks.push(x.c);}
+  const g=mood==='tired'?.75:1;
+  const out=picks.map((c,i)=>{const n=Math.max(5,Math.round(c.base*ad.f*g/(c.unit==='reps'?1:1)));const mins=c.unit==='reps'?c.mins(n):n;
+    let why='Matches how you like to move.';
+    if(mood==='tired')why='A gentle pick for a tired day.';
+    else if(c.tags.some(t=>tags.has(t)))why='Matches your preferred activities.';
+    else if(c.id==='break')why='A small reset after a long study block.';
+    else why='Adds some variety to your week.';
+    return {id:c.id,title:c.t(n),type:c.type,mins,pts:30+(ad.f>1?10:0),e:c.e,why};});
+  return out;
+}
+function dailyChallenges(k=TODAY()){
+  if(!S.daily[k]){S.daily[k]=genDaily(k);S.offered[k]=S.daily[k].length;}
+  return S.daily[k];
+}
+function completeChallenge(id){
+  const k=TODAY(),list=dailyChallenges(k),c=list.find(x=>x.id===id);
+  if(!c)return null; S.cdone[k]=S.cdone[k]||[]; if(S.cdone[k].includes(id))return null;
+  S.cdone[k].push(id);addPts(c.pts,'Challenge: '+c.title);
+  const res=logActivity({type:c.type,min:c.mins,src:'challenge',note:c.title,quiet:true});
+  res.pts+=c.pts;res.challenge=c;return res;
+}
+
+/* ---------- logging ---------- */
+function logActivity({type,min,dist=null,date=TODAY(),src='manual',note='',quiet=false}){
+  min=Math.max(1,Math.round(min));
+  const rankBefore=myRank();
+  const firstToday=!S.acts.some(a=>a.date===date);
+  const t=TYPES[type],pts=Math.min(100,10+min);
+  if(dist==null&&t.dist&&src!=='manual')dist=+(t.kmh*min/60).toFixed(1);
+  S.acts.push({id:uid(),type,min,dist,date,pts,steps:Math.round(min*(t.spm||0)),src,note});
+  addPts(pts,t.n+' · '+min+' min',date);
+  let bonus=0;
+  if(firstToday&&date===TODAY()){const st=streak();if(st>=2){bonus=Math.min(st*5,50);addPts(bonus,st+'-day streak bonus');}}
+  S.teams.filter(x=>x.joined).forEach(x=>{x.done++;x.pts+=pts;const m=x.members.find(y=>y.me);if(m)m.n++;});
+  bumpPeers(2,5,20);
+  const newB=evalBadges();
+  const rankAfter=myRank();
+  save();
+  const res={pts,bonus,newB,rankBefore,rankAfter,act:t.n};
+  if(!quiet)reward(res);
+  return res;
+}
+function reward(res){
+  if(res.pts+(res.bonus||0)>0)toast('+'+(res.pts+(res.bonus||0))+' points'+(res.bonus?' (incl. '+res.bonus+' streak bonus)':''),'sun');
+  if(res.rankAfter<res.rankBefore)setTimeout(()=>toast('You moved up to #'+res.rankAfter+' on the leaderboard'),700);
+  if(res.newB&&res.newB.length)setTimeout(()=>showBadgeUnlock(res.newB),900);
+  const gm=S.user.weeklyGoal-weekMins();
+  if(gm>0&&gm<=15)notify('You are only '+gm+' minutes from this week\'s goal.','flag');
+  refresh();
+}
+
+/* ---------- messaging engines ---------- */
+function motivation(){
+  const st=streak(),k=TODAY(),today=minsOn(k),rem=Math.max(0,S.user.weeklyGoal-weekMins());
+  const last=S.acts.length?S.acts.map(a=>a.date).sort().pop():null;
+  const gap=last?Math.round((parseK(TODAY())-parseK(last))/86400000):null;
+  const mood=S.mood[k];
+  if(!S.acts.length)return 'Start with a 10-minute walk. Small steps count and every activity earns points.';
+  if(rem>0&&rem<=25)return 'Only '+rem+' minutes to go to reach this week\'s goal. One more activity does it.';
+  if(rem===0)return 'You reached this week\'s goal. Anything extra is a bonus, and rest is part of the plan too.';
+  if(today===0&&st>=2)return 'Your '+st+'-day streak is still active. A short activity today keeps it going.';
+  if(gap!==null&&gap>=3)return 'Welcome back. A 10-minute walk is a great way to restart.';
+  if(mood==='tired'&&today===0)return 'Low energy days count too. A gentle stretch or short walk is plenty.';
+  if(today>0)return 'Nice work today. You are building a consistent habit.';
+  return 'Every small activity adds up. Pick one challenge to begin.';
+}
+const LBL={walking:['brisk walk','brisk walking'],running:['easy jog','easy jogging'],cycling:['relaxed ride','relaxed cycling'],sports:['game of your choice','sport play'],gym:['bodyweight strength circuit','bodyweight strength work'],yoga:['stretching session','stretching'],other:['movement session','movement']};
+function pickMain(o){
+  let cand=o.env==='Indoor'||S.user.env==='Indoor'&&!o.env?prefTypes().filter(t=>['yoga','gym','other'].includes(t)):prefTypes();
+  if(!cand.length)cand=(o.env==='Indoor'||S.user.env==='Indoor')?['yoga']:['walking'];
+  const c=typeCounts(7);return [...cand].sort((a,b)=>(c[a]||0)-(c[b]||0))[0];
+}
+function coachPlan(mins,o={}){
+  const main=o.type||pickMain(o);let b;
+  if(o.gentle){const w=Math.max(5,Math.round(mins*.6));b=mins<=10?[{type:'yoga',min:mins}]:[{type:'walking',min:w},{type:'yoga',min:Math.max(5,mins-w)}];}
+  else if(main==='yoga')b=[{type:'yoga',min:mins}];
+  else if(mins<=10)b=[{type:main,min:mins}];
+  else if(mins<=25){const s=mins>=15?5:Math.round(mins/3);b=[{type:main,min:mins-s},{type:'yoga',min:s}];}
+  else b=[{type:'yoga',min:5},{type:main,min:mins-10},{type:'yoga',min:5}];
+  return b;
+}
+function planText(b){
+  if(b.length===1)return 'Try a '+b[0].min+'-minute '+LBL[b[0].type][0]+'.';
+  if(b.length===2)return 'Try a '+b[0].min+'-minute '+LBL[b[0].type][0]+' followed by '+b[1].min+' minutes of '+LBL[b[1].type][1]+'.';
+  return 'Warm up with '+b[0].min+' minutes of stretching, then do a '+b[1].min+'-minute '+LBL[b[1].type][0]+', and finish with '+b[2].min+' minutes of stretching.';
+}
+function coachReply(q){
+  const m=q.toLowerCase();let mins=null;
+  const mm=m.match(/(\d+)\s*(min|minute|minutes|mins|hour|hr|hours)/);
+  if(mm){mins=+mm[1];if(/hour|hr/.test(mm[2]))mins*=60;}
+  const gentle=/tired|sleepy|exhaust|low energy|drained/.test(m)||S.mood[TODAY()]==='tired'&&!mm&&!/energ|great/.test(m);
+  if(mins==null)mins=/quick|short|little|busy/.test(m)?10:S.user.minutes;
+  mins=clamp(mins,5,90);
+  const o={gentle};
+  if(/walk|stroll/.test(m))o.type='walking';else if(/run|jog/.test(m))o.type='running';else if(/cycl|bike|ride/.test(m))o.type='cycling';
+  else if(/yoga|stretch|mobil/.test(m))o.type='yoga';else if(/strength|squat|push|gym|weights/.test(m))o.type='gym';else if(/sport|badminton|football|cricket|tennis/.test(m))o.type='sports';
+  if(/indoor|inside|room|hostel|rain/.test(m))o.env='Indoor';
+  if(/study|desk|break|sitting/.test(m)&&!mm){mins=5;o.type='yoga';}
+  const wantsGoal=/goal|week|streak/.test(m);
+  const blocks=coachPlan(mins,o);
+  let text=planText(blocks);
+  const rem=Math.max(0,S.user.weeklyGoal-weekMins());
+  let lead='';
+  if(gentle)lead='Low energy days count too, so let\'s keep it gentle. ';
+  else if(o.env==='Indoor')lead='Staying indoors works well. ';
+  const tips=[];
+  if(wantsGoal||rem>0&&rem<=30)tips.push(rem>0?'You are '+rem+' minutes from this week\'s goal, and this plan '+(mins>=rem?'gets you there.':'moves you closer.'):'You already reached this week\'s goal, so this one is a bonus.');
+  const st=streak();if(st>=2&&minsOn(TODAY())===0)tips.push('It also keeps your '+st+'-day streak alive.');
+  const c=typeCounts(7),dom=Object.keys(c).sort((a,b)=>c[b]-c[a])[0];
+  if(!o.type&&dom&&c[dom]>=3&&blocks[0].type!==dom)tips.push('You have done plenty of '+TYPES[dom].n.toLowerCase()+' lately, so this adds some variety.');
+  return {text:lead+text+(tips.length?' '+tips.join(' '):''),blocks};
+}
+
+/* ---------- toasts / modals ---------- */
+function toast(t,kind){const box=$('#toasts');const n=document.createElement('div');n.className='toast';n.innerHTML=(kind==='sun'?'<span>⭐</span>':'')+esc(t);box.appendChild(n);setTimeout(()=>n.remove(),3200);}
+function openModal(html,cls=''){const m=document.createElement('div');m.className='scrim';m.dataset.act='scrim';m.innerHTML='<div class="sheet '+cls+'" role="dialog" aria-modal="true"><button class="iconbtn x" data-act="closeModal" aria-label="Close">'+ico('x')+'</button>'+html+'</div>';$('#layer').appendChild(m);const f=$('button:not(.x),input,select',m);return m;}
+function closeModal(){const L=$('#layer');if(L.lastElementChild){L.lastElementChild.remove();}stopRun();}
+function topModal(){return $('#layer').lastElementChild;}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cs=['#3B4BFF','#FFB800','#FF6B3D','#0FA57A','#E8489B'];for(let i=0;i<46;i++){const c=document.createElement('i');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=cs[i%cs.length];c.style.animationDuration=(1.6+Math.random()*1.6)+'s';c.style.animationDelay=(Math.random()*.4)+'s';c.style.borderRadius=Math.random()<.5?'50%':'2px';document.body.appendChild(c);setTimeout(()=>c.remove(),3800);}}
+function showBadgeUnlock(ids){
+  const all=BADGES.concat(EVBADGES),list=ids.map(id=>all.find(b=>b.id===id)).filter(Boolean);
+  confetti();
+  openModal('<div class="center stack" style="align-items:center;gap:16px;padding:8px 0"><h2>'+(list.length>1?'Badges unlocked':'Badge unlocked')+'</h2><div class="row wrap" style="justify-content:center;gap:20px">'+list.map(b=>'<div class="badge pop" style="--bc:'+b.c+'"><div class="hex" style="--bc:'+b.c+'">'+b.e+'</div><span>'+esc(b.n)+'</span><span class="muted small" style="font-weight:500">'+esc(b.d)+'</span></div>').join('')+'</div><button class="btn btn-primary" data-act="closeModal">Keep going</button></div>');
+  list.forEach(b=>notify('Badge unlocked: '+b.n,'trophy'));
+}
+
+/* ---------- charts ---------- */
+function ring(pct,o={}){const size=o.size||140,sw=o.sw||12,color=o.color||'var(--primary)',track=o.track||'var(--surface2)';const r=(size-sw)/2,c=2*Math.PI*r,p=clamp(pct,0,1);
+  return '<div class="ringw" style="width:'+size+'px;height:'+size+'px"><svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" aria-hidden="true"><circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="'+track+'" stroke-width="'+sw+'"/><circle class="rfill" cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" transform="rotate(-90 '+size/2+' '+size/2+')" fill="none" stroke="'+color+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+c*(1-p)+'" style="--c:'+c+'"/></svg><div class="rin">'+(o.inner||'')+'</div></div>';}
+function bars(vals,labels,o={}){const h=o.h||110,max=Math.max(...vals,1);return '<div class="bars" style="--h:'+h+'px" role="img" aria-label="'+esc(o.label||'Bar chart')+'">'+vals.map((v,i)=>'<div class="bcol '+(i===o.hi?'hi':'')+'"><div class="bval">'+(v||'')+'</div><div class="bbar" style="height:'+Math.max(v?6:3,Math.round(v/max*h))+'px"></div><div class="blab">'+esc(labels[i])+'</div></div>').join('')+'</div>';}
+function lineChart(vals,labels){const W=320,H=130,p=14,max=Math.max(...vals,1);const pts=vals.map((v,i)=>[p+i*(W-2*p)/Math.max(1,vals.length-1),H-22-(v/max)*(H-44)]);
+  const d=pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ');const lp=pts[pts.length-1],fp=pts[0];
+  return '<svg viewBox="0 0 '+W+' '+H+'" class="line" role="img" aria-label="Weekly activity minutes, last '+vals.length+' weeks"><path d="'+d+' L'+lp[0]+' '+(H-22)+' L'+fp[0]+' '+(H-22)+'Z" fill="var(--primary)" opacity=".13"/><path d="'+d+'" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>'+pts.map((q,i)=>'<circle cx="'+q[0]+'" cy="'+q[1]+'" r="'+(i===pts.length-1?5:3)+'" fill="var(--primary)"/>').join('')+labels.map((l,i)=>'<text x="'+pts[i][0]+'" y="'+(H-4)+'" text-anchor="middle" font-size="9.5" fill="var(--ink2)">'+esc(l)+'</text>').join('')+'</svg>';}
+function badgeEl(b,earned,pop){return '<button class="badge '+(earned?'':'locked')+(pop?' pop':'')+'" data-act="badgeInfo" data-id="'+b.id+'" aria-label="'+esc(b.n+(earned?' (earned)':' (locked)')+': '+b.d)+'"><div class="hex" style="--bc:'+b.c+'">'+b.e+'</div><span>'+esc(b.n)+'</span></button>';}
+const avatar=(n,s=38)=>'<div class="av" style="width:'+s+'px;height:'+s+'px;background:'+avColor(n)+'">'+esc(n.slice(0,1).toUpperCase())+'</div>';
+
+/* ---------- landing ---------- */
+function vLanding(){
+  const feats=[['🎯','Smart Challenges','Three short daily challenges that adapt to your time, mood and history.','var(--primary-soft)'],
+    ['☕','StudyBreak','A gentle nudge after long study blocks with a guided 5-minute reset.','var(--mint-soft)'],
+    ['🤝','Campus Challenges','Join your class or department and move together, not against each other.','var(--flame-soft)'],
+    ['📈','Activity Insights','Plain-language patterns about when and how you like to move.','var(--sun-soft)'],
+    ['🧭','AI Coach','General activity ideas for the time you actually have today.','var(--primary-soft)'],
+    ['🏅','Gamified Progress','Points, streaks and badges that reward showing up.','var(--mint-soft)']];
+  const how=['Set your activity preferences','Get a personalized challenge','Complete activities','Earn points and badges','Join your campus','Build consistent healthy habits'];
+  return '<div class="land"><nav class="l-nav" aria-label="Main"><div class="brand" style="padding:0">'+logoSvg(34)+'FITQUEST</div><div class="row"><button class="btn btn-line btn-sm" data-act="startDemo">Explore Demo</button><button class="btn btn-primary btn-sm" data-act="toAuth" data-v="signup">Get Started</button></div></nav>'
+  +'<header class="l-hero"><div class="lanes"><svg viewBox="0 0 800 800" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="400" cy="400" r="150" opacity=".35"/><circle cx="400" cy="400" r="210" opacity=".28"/><circle cx="400" cy="400" r="270" opacity=".22"/><circle cx="400" cy="400" r="330" opacity=".16"/><circle cx="400" cy="400" r="390" opacity=".1"/></svg></div>'
+  +'<div><h1><span>Move More.</span><span>Live Better.</span><span>Together.</span></h1><p class="l-sub">FITQUEST turns everyday student activity into simple challenges, healthy habits, and community-powered motivation.</p>'
+  +'<div class="row wrap"><button class="btn btn-primary btn-lg" data-act="toAuth" data-v="signup">Get Started</button><button class="btn btn-line btn-lg" data-act="startDemo">Explore Demo</button></div>'
+  +'<p class="small muted" style="margin-top:18px">No wearables needed. Built for ordinary students, not athletes.</p></div>'
+  +'<div style="position:relative"><div class="phone" aria-label="Preview of the FITQUEST daily view"><div class="row between"><b style="font-family:var(--font-display);font-size:18px">Today</b><span class="pill flame">'+ico('flame',14)+'<span id="hm-streak">6</span>-day streak</span></div>'
+  +'<div class="row" style="gap:18px"><div id="hm-ring">'+ring(.2,{size:104,sw:11,inner:'<b id="hm-min" style="font-family:var(--font-display);font-size:24px;line-height:1">4</b><span class="tiny muted">of 20 min</span>'})+'</div><div class="stack" style="gap:2px"><span class="muted small">Points</span><b id="hm-pts" style="font-family:var(--font-display);font-size:30px;line-height:1">1,240</b><span class="tiny muted">Level: Pacer</span></div></div>'
+  +'<div class="ptspop" id="hm-pop">+45</div>'
+  +'<div class="stack" style="gap:8px"><div class="li" data-i="0"><i>✓</i>10-minute walk</div><div class="li" data-i="1"><i>✓</i>8-minute stretching</div><div class="li" data-i="2"><i>✓</i>10 squats</div></div>'
+  +'<div class="notice mint" style="font-size:13px"><span>☕</span><span>You have been studying a while. Take a 5-minute movement break.</span></div></div></div></header>'
+  +'<section class="sect" aria-labelledby="pf"><h2 id="pf">From a sitting problem to a moving habit</h2><div class="pfip">'
+  +'<div><h3>Problem</h3><p class="muted">Long classes, study hours and screens leave students less active. Most fitness apps feel built for athletes, so motivation fades.</p></div>'
+  +'<div><h3>Solution</h3><p class="muted">Short, achievable daily challenges with manual or demo tracking that works on any phone, with no gear.</p></div>'
+  +'<div><h3>Innovation</h3><p class="muted">StudyBreak nudges, adaptive difficulty, a mood-aware AI coach, and team challenges that reward participation over body size.</p></div>'
+  +'<div><h3>Impact</h3><p class="muted">More students moving a little every day, and welfare teams seeing aggregated participation without any private health data.</p></div></div></section>'
+  +'<section class="sect" aria-labelledby="ft" style="padding-top:20px"><h2 id="ft">Everything a student needs to start moving</h2><div class="grid g3" style="margin-top:28px">'+feats.map(f=>'<div class="card feat"><div class="em" style="background:'+f[3]+'">'+f[0]+'</div><h3>'+f[1]+'</h3><p class="muted">'+f[2]+'</p></div>').join('')+'</div></section>'
+  +'<section class="sect" aria-labelledby="hw" style="padding-top:20px"><h2 id="hw">How FITQUEST works</h2><div class="steps6">'+how.map((h,i)=>'<div><b>'+(i+1)+'</b><h3 style="font-size:20px">'+h+'</h3></div>').join('')+'</div>'
+  +'<div class="row wrap" style="margin-top:34px"><button class="btn btn-primary btn-lg" data-act="startDemo">Explore Demo</button><button class="btn btn-line btn-lg" data-act="toAuth" data-v="signup">Create your account</button></div></section>'
+  +'<footer class="l-foot"><p>FITQUEST gives general activity ideas only. It is not a medical service. Stop if you feel pain, dizziness or unwell, stay hydrated and choose activities that suit your ability. Talk to a trusted adult or health professional about any health concern.</p><p style="margin-top:10px">This prototype stores everything on your device. <button class="link" data-act="adminFromLanding">Preview the welfare dashboard</button></p></footer></div>';
+}
+let heroTimer=null;
+function heroLoop(){
+  clearTimeout(heroTimer);
+  const run=()=>{if(route!=='landing'||!$('#hm-ring'))return;
+    const items=$$('.phone .li');items.forEach(i=>i.classList.remove('done'));$('#hm-pop').classList.remove('on');
+    const set=(n,min,pts,st)=>{$('#hm-ring').innerHTML=ring(min/20,{size:104,sw:11,inner:'<b id="hm-min" style="font-family:var(--font-display);font-size:24px;line-height:1">'+min+'</b><span class="tiny muted">of 20 min</span>'});$('#hm-pts').textContent=pts.toLocaleString();$('#hm-streak').textContent=st;};
+    set(0,4,1240,6);
+    const steps=[[900,0,14,1285,6],[2100,1,20,1330,6],[3300,2,24,1375,7]];
+    steps.forEach(s=>setTimeout(()=>{if(route!=='landing'||!$('#hm-ring'))return;items[s[1]].classList.add('done');set(0,s[2],s[3],s[4]);const p=$('#hm-pop');p.classList.remove('on');void p.offsetWidth;p.classList.add('on');},s[0]));
+    heroTimer=setTimeout(run,7200);};
+  heroTimer=setTimeout(run,300);
+}
+
+/* ---------- auth ---------- */
+function vAuth(){
+  const t=ui.authTab;
+  return '<div class="center-page"><div class="auth-card"><button class="link small" data-act="toLanding" style="margin-bottom:14px">'+ico('back',14)+' Back to home</button><div class="card"><div class="brand" style="padding:0 0 10px">'+logoSvg(30)+'FITQUEST</div>'
+  +'<div class="seg" role="tablist" style="margin-bottom:18px"><button role="tab" aria-selected="'+(t==='signup')+'" data-act="authTab" data-v="signup">Sign up</button><button role="tab" aria-selected="'+(t==='login')+'" data-act="authTab" data-v="login">Log in</button></div>'
+  +'<div class="stack" style="gap:14px">'
+  +(t==='signup'?'<div class="field"><label for="a-nick">Nickname (shown on leaderboards)</label><input id="a-nick" maxlength="18" autocomplete="nickname" placeholder="e.g. MorningMover"></div><div class="field"><label for="a-name">Full name</label><input id="a-name" maxlength="40" autocomplete="name"></div><div class="field"><label for="a-school">School / College</label><input id="a-school" maxlength="60" autocomplete="organization" placeholder="e.g. DRIEMS Polytechnic"></div>':'')
+  +'<div class="field"><label for="a-email">Gmail / Email</label><input id="a-email" type="email" autocomplete="email" placeholder="you@college.edu"></div><div class="field"><label for="a-pw">Password</label><input id="a-pw" type="password" autocomplete="'+(t==='signup'?'new-password':'current-password')+'" placeholder="At least 6 characters"></div>'
+  +(t==='login'?'<button class="link small" data-act="forgot" style="text-align:left">Forgot password?</button>':'')+'<div class="err" id="a-err" role="alert">'+esc(ui.authErr)+'</div>'
+  +'<button class="btn btn-primary btn-lg btn-block" data-act="authSubmit">'+(t==='signup'?'Create account':'Log in')+'</button>'
+  +'<div class="row" style="color:var(--ink2)"><hr style="flex:1;border:0;border-top:1px solid var(--line)"><span class="small">or</span><hr style="flex:1;border:0;border-top:1px solid var(--line)"></div>'
+  +'<button class="btn btn-line btn-block" data-act="startDemo">Use the demo account</button><button class="btn btn-sun btn-block" data-act="runDemo">🎬 Run Demo</button>'
+  +'<p class="tiny muted">This prototype keeps accounts on your device only. Nothing is sent to a server.</p></div></div></div></div>';
+}
+async function pwHash(p){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('fq:'+p));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}catch(e){return 'x'+hashS(p);}}
+async function authSubmit(){
+  const v=id=>($('#'+id)||{}).value||'';const email=v('a-email').trim().toLowerCase(),pw=v('a-pw');
+  const acc=store.get('fq_accounts')||{};ui.authErr='';
+  if(!/^\S+@\S+\.\S+$/.test(email))ui.authErr='Enter a valid email address.';
+  else if(pw.length<6)ui.authErr='Password needs at least 6 characters.';
+  if(!ui.authErr){
+    const h=await pwHash(pw);
+    if(ui.authTab==='signup'){
+      const nick=v('a-nick').trim();
+      if(nick.length<3)ui.authErr='Choose a nickname with at least 3 characters.';
+      else if(!v('a-name').trim()||!v('a-school').trim())ui.authErr='Full name and School/College are required.';
+      else if(nick.length>18)ui.authErr='Nickname can be at most 18 characters.';
+      else if(acc[email]){ui.authErr='This email already has an account. Please log in or reset your password.';ui.dupe=1;}
+      else{acc[email]={h};store.set('fq_accounts',acc);SESSION=email;store.set('fq_session',email);
+        S=newState({name:v('a-name').trim(),nick,school:v('a-school').trim(),email});schoolize(S);ui.ob={prefs:[]};ui.obStep=0;save();go('onboard');return;}
+    }else{
+      if(!acc[email]||acc[email].h!==h)ui.authErr='Email or password is not correct.';
+      else{SESSION=email;store.set('fq_session',email);S=store.get('fq_data_'+email);if(S)schoolize(S);
+        if(!S){ui.authErr='No saved data found for this account.';}
+        else{ui.chat=null;go(S.user.onboarded?'home':'onboard');return;}}
+    }
+  }
+  const e=$('#a-err');if(e){e.textContent=ui.authErr;if(ui.dupe){ui.dupe=0;e.insertAdjacentHTML('beforeend','<div class="row" style="gap:8px;margin-top:8px"><button class="btn btn-sm btn-primary" data-act="authTab" data-v="login">Log In</button><button class="btn btn-sm btn-line" data-act="forgot">Forgot Password</button></div>');}}
+}
+
+/* ---------- onboarding ---------- */
+const OB=[
+ {k:'age',q:'Which age group are you in?',opts:['16–18','19–21','22–25','26+'],multi:false},
+ {k:'level',q:'How active are you on a normal week?',opts:['Mostly seated','Lightly active','Moderately active','Very active'],multi:false},
+ {k:'prefs',q:'What do you enjoy moving with?',sub:'Pick as many as you like.',opts:PREF_OPTS.map(p=>p.n),emoji:PREF_OPTS.map(p=>p.e),multi:true},
+ {k:'minutes',q:'How much time can you give most days?',opts:['10 minutes','20 minutes','30 minutes','45+ minutes'],vals:[10,20,30,45],multi:false},
+ {k:'env',q:'Indoor or outdoor?',opts:['Indoor','Outdoor','Either'],emoji:['🏠','🌤️','🔄'],multi:false},
+ {k:'goal',q:'What is your personal activity goal?',opts:GOALS.map(g=>g.n),multi:false}
+];
+function vOnboard(){
+  const i=ui.obStep,q=OB[i],sel=ui.ob[q.k];
+  const isSel=(o,idx)=>q.multi?(sel||[]).includes(o):(q.vals?sel===q.vals[idx]:sel===o);
+  return '<div class="center-page"><div class="auth-card"><div class="card"><div class="prog" aria-label="Step '+(i+1)+' of '+OB.length+'">'+OB.map((_,j)=>'<i class="'+(j<=i?'on':'')+'"></i>').join('')+'</div>'
+  +'<p class="small muted">Step '+(i+1)+' of '+OB.length+'</p><h2 style="font-size:30px;margin:6px 0 4px">'+q.q+'</h2>'+(q.sub?'<p class="muted small">'+q.sub+'</p>':'')
+  +'<div class="stack" style="margin:20px 0">'+q.opts.map((o,idx)=>'<button class="opt" data-act="obPick" data-i="'+idx+'" aria-pressed="'+isSel(o,idx)+'">'+(q.emoji?'<span class="em">'+q.emoji[idx]+'</span>':'')+esc(o)+'</button>').join('')+'</div>'
+  +'<div class="row between">'+(i>0?'<button class="btn btn-line" data-act="obBack">Back</button>':'<span></span>')+'<button class="btn btn-primary" data-act="obNext" '+((q.multi?(sel||[]).length:sel!=null&&sel!=='')?'':'disabled')+'>'+(i===OB.length-1?'Finish':'Next')+'</button></div>'
+  +'<p class="tiny muted" style="margin-top:18px">We only ask what we need to suggest activities. No weight, height or health records.</p></div></div></div>';
+}
+function finishOnboard(){
+  const o=ui.ob;Object.assign(S.user,{age:o.age,level:o.level,prefs:o.prefs,minutes:o.minutes,env:o.env,goal:o.goal,weeklyGoal:(GOALS.find(g=>g.n===o.goal)||GOALS[1]).w,onboarded:true});
+  S.daily={};S.offered={};dailyChallenges();
+  notify('Welcome to FITQUEST. Your first daily challenges are ready.','flag');save();go('home');
+}
+
+/* ---------- shell ---------- */
+const NAV=[['home','Home','home'],['activities','Activities','act'],['challenges','Challenges','flag'],['leaderboard','Leaderboard','trophy'],['insights','Insights','chart'],['profile','Profile','user']];
+function shell(inner){
+  const unread=S.notifs.some(n=>!n.read);const cur=route;
+  const navBtn=(n,cls)=>'<button class="'+cls+'" data-act="go" data-v="'+n[0]+'" '+(cur===n[0]?'aria-current="page"':'')+'>'+ico(n[2],cls==='nv'?20:22)+'<span>'+n[1]+'</span></button>';
+  return '<div class="shell"><aside class="side" aria-label="Sidebar"><div class="brand">'+logoSvg(32)+'FITQUEST</div>'
+  +NAV.map(n=>navBtn(n,'nv')).join('')
+  +'<button class="btn btn-primary btn-lg btn-block" data-act="start" style="margin:14px 0 6px">'+ico('play',18)+' Start Activity</button>'
+  +'<button class="nv" data-act="go" data-v="coach" '+(cur==='coach'?'aria-current="page"':'')+'>'+ico('spark',20)+'<span>AI Coach</span></button>'
+  +'<button class="nv" data-act="go" data-v="studybreak" '+(cur==='studybreak'?'aria-current="page"':'')+'>'+ico('cup',20)+'<span>StudyBreak</span></button>'
+  +'<button class="nv" data-act="go" data-v="admin" '+(cur==='admin'?'aria-current="page"':'')+'>'+ico('shield',20)+'<span>Welfare view</span></button>'
+  +'<div style="margin-top:auto" class="stack" style="gap:8px">'+(S.demo?'<button class="btn btn-sun btn-block" data-act="director">Demo controls</button>':'')+'</div></aside>'
+  +'<div class="mainwrap"><header class="top"><div class="brand-m">'+logoSvg(30)+'<b style="font-family:var(--font-display);font-size:19px">FITQUEST</b></div>'
+  +'<div class="chips-top"><span class="stat-chip" title="Points">⭐ <span data-count="'+totalPts()+'" data-key="tp">'+totalPts()+'</span></span><span class="stat-chip" title="Streak" style="color:var(--flame)">'+ico('flame',16)+streak()+'</span>'
+  +(S.demo?'<button class="btn btn-sun btn-sm" data-act="director">Demo</button>':'')
+  +'<button class="iconbtn" data-act="coachOpen" aria-label="AI Coach">'+ico('spark')+'</button><button class="iconbtn" data-act="safety" aria-label="Safety tips">'+ico('shield')+'</button>'
+  +'<button class="iconbtn" data-act="bell" aria-label="Notifications">'+ico('bell')+(unread?'<i class="dot"></i>':'')+'</button><button class="iconbtn" data-act="theme" aria-label="Toggle dark mode">'+ico(isDark()?'sun':'moon')+'</button></div></header>'
+  +'<main id="main" class="main">'+inner+'</main></div>'
+  +'<nav class="bnav" aria-label="Primary">'+NAV.map(n=>navBtn(n,'')).join('')+'</nav>'
+  +'<button class="fab" data-act="start">'+ico('play',20)+' Start Activity</button></div>';
+}
+const isDark=()=>{const t=document.documentElement.dataset.theme;return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;};
+
+/* ---------- HOME ---------- */
+function vHome(){
+  const k=TODAY(),tm=minsOn(k),tgt=S.user.minutes,st=streak(),lv=level();
+  const list=dailyChallenges(),done=S.cdone[k]||[],wk=weekDays(),wm=wk.reduce((a,b)=>a+b,0),goal=S.user.weeklyGoal;
+  const todayIdx=(new Date().getDay()+6)%7;
+  const rec=coachPlan(S.user.minutes,{gentle:S.mood[k]==='tired'});
+  const recent=S.acts.map((a,i)=>[a,i]).sort((x,y)=>y[0].date.localeCompare(x[0].date)||y[1]-x[1]).slice(0,4).map(x=>x[0]);
+  const upEvent=S.event;const evLeft=upEvent.end-Date.now();
+  const nextTeam=S.teams.filter(t=>t.joined).sort((a,b)=>a.end-b.end)[0];
+  const moods=[['great','😄','Great'],['good','🙂','Good'],['okay','😐','Okay'],['tired','😴','Tired']];
+  const cm=S.mood[k];
+  const moodReply={great:'Great. Today has a little more variety in it.',good:'Good to hear. Today\'s challenges are set at a steady level.',okay:'Okay is fine. A short walk can help, and today stays light.',tired:'Thanks for telling us. Today\'s picks are gentle, and rest is fine too.'};
+  return '<div class="view-h"><p class="muted">'+DOW[new Date().getDay()]+', '+new Date().getDate()+' '+MON[new Date().getMonth()]+'</p><h1>Hi '+esc(S.user.nick)+'</h1></div>'
+  +'<div class="stack" style="gap:16px">'
+  +'<section class="card hero-card" aria-label="Today\'s activity"><div class="row wrap" style="gap:26px;position:relative;z-index:1">'
+  +ring(tm/tgt,{size:158,sw:14,color:'#FFB800',track:'rgba(255,255,255,.2)',inner:'<b data-count="'+tm+'" data-key="tm" style="font-family:var(--font-display);font-size:38px;line-height:1">'+tm+'</b><span class="small" style="opacity:.85">of '+tgt+' min</span>'})
+  +'<div class="grow" style="min-width:220px"><h2 style="font-size:26px">'+(tm>=tgt?'Daily goal reached':'Today\'s activity')+'</h2><p class="muted" style="margin:6px 0 14px">'+esc(motivation())+'</p>'
+  +'<div class="row wrap" style="gap:22px;margin-bottom:16px"><div class="stat"><b data-count="'+stepsOn(k)+'" data-key="steps">'+stepsOn(k).toLocaleString()+'</b><span class="small muted">steps'+(S.demo?' (demo sensor)':'')+'</span></div><div class="stat"><b>'+ico('flame',22)+' '+st+'</b><span class="small muted">day streak</span></div><div class="stat"><b data-count="'+totalPts()+'" data-key="pts">'+totalPts().toLocaleString()+'</b><span class="small muted">points</span></div></div>'
+  +'<button class="btn btn-primary btn-lg" data-act="start">'+ico('play',18)+' Quick start activity</button></div></div></section>'
+  +'<div class="grid g2">'
+  +'<section class="card" aria-label="Today\'s challenge"><div class="row between"><h3>Today\'s challenge</h3><span class="pill primary">'+adapt().label+' level</span></div><p class="small muted" style="margin-bottom:12px">'+esc(adapt().note)+'</p><div class="stack" style="gap:10px">'
+  +list.map(c=>{const d=done.includes(c.id);return '<div class="ch-item '+(d?'done':'')+'"><div class="em">'+c.e+'</div><div class="grow"><b style="display:block;line-height:1.25">'+esc(c.title)+'</b><span class="small muted">'+esc(c.why)+' +'+c.pts+' pts</span></div><button class="ch-check" data-act="doChallenge" data-id="'+c.id+'" aria-label="'+(d?'Completed':'Mark complete')+': '+esc(c.title)+'" '+(d?'disabled':'')+'>'+ico('check',22)+'</button></div>';}).join('')
+  +'</div></section>'
+  +'<section class="card" aria-label="Weekly activity progress"><div class="row between"><h3>Weekly progress</h3><span class="pill '+(wm>=goal?'mint':'')+'">'+wm+' / '+goal+' min</span></div>'
+  +'<div class="bar '+(wm>=goal?'mint':'')+'" style="margin:12px 0 6px"><i style="width:'+clamp(wm/goal*100,0,100)+'%"></i></div><p class="small muted">'+(wm>=goal?'Weekly goal reached. Nice work.':(goal-wm)+' minutes to go this week.')+'</p>'
+  +bars(wk,['M','T','W','T','F','S','S'],{hi:todayIdx,h:90,label:'Minutes active each day this week'})+'</section></div>'
+  +'<div class="grid g3">'
+  +'<section class="card sm" aria-label="Recommendation"><div class="row" style="gap:8px;margin-bottom:6px"><span class="pill primary">'+ico('spark',14)+' For you</span></div><h3 style="font-size:18px">'+esc(planText(rec))+'</h3><p class="small muted" style="margin:8px 0 12px">Suggested from your preferences, available time and recent activity.</p><div class="row wrap"><button class="btn btn-primary btn-sm" data-act="startPlan">Start</button><button class="btn btn-line btn-sm" data-act="coachOpen">Ask AI Coach</button></div></section>'
+  +'<section class="card sm" aria-label="StudyBreak"><div class="row" style="gap:8px;margin-bottom:6px"><span class="pill mint">'+ico('cup',14)+' StudyBreak</span></div><h3 style="font-size:18px">'+(clock.studyOn?'Studying for <span id="studyClock">'+fmtClock(clock.study*60)+'</span>':'Been studying a while?')+'</h3><p class="small muted" style="margin:8px 0 12px">'+(clock.studyOn?'We will suggest a break after '+S.set.breakEvery+' minutes.':'Start a study session and we will nudge you to move after '+S.set.breakEvery+' minutes.')+'</p><div class="row wrap"><button class="btn btn-mint btn-sm" data-act="breakOpen">Start 5-Minute Break</button><button class="btn btn-line btn-sm" data-act="studyToggle">'+(clock.studyOn?'Stop study session':'Start study session')+'</button></div></section>'
+  +'<section class="card sm" aria-label="Wellness check-in"><h3 style="font-size:18px;margin-bottom:10px">How are you feeling today?</h3><div class="mood" role="group" aria-label="Mood">'+moods.map(m=>'<button data-act="mood" data-v="'+m[0]+'" aria-pressed="'+(cm===m[0])+'"><span>'+m[1]+'</span>'+m[2]+'</button>').join('')+'</div><p class="small muted" style="margin-top:10px">'+(cm?moodReply[cm]:'Optional. Used only to tune your suggestions. It is not a health assessment.')+'</p></section></div>'
+  +'<div class="grid g2">'
+  +'<section class="card" aria-label="Upcoming challenge"><h3>Upcoming</h3>'
+  +(nextTeam?'<div class="tile" style="margin:12px 0"><b>'+esc(nextTeam.name)+'</b><div class="bar" style="margin:10px 0 6px"><i style="width:'+clamp(nextTeam.done/nextTeam.target*100,0,100)+'%"></i></div><span class="small muted">'+nextTeam.done+' of '+nextTeam.target+' activities · '+remaining(nextTeam.end)+' left</span></div>':'')
+  +'<div class="tile"><div class="row between"><div><b>'+esc(upEvent.name)+'</b><p class="small muted">'+(evLeft>0?'Ends in '+remaining(upEvent.end):'Event finished')+'</p></div><button class="btn btn-sm '+(upEvent.joined?'btn-line':'btn-primary')+'" data-act="'+(upEvent.joined?'goEvent':'joinEvent')+'">'+(upEvent.joined?'View':'Join +30')+'</button></div></div></section>'
+  +'<section class="card" aria-label="Recent activity"><div class="row between"><h3>Recent activity</h3><button class="link small" data-act="goLog">See all</button></div>'
+  +(recent.length?recent.map(actRow).join(''):'<div class="empty" style="margin-top:12px">No activity yet. Tap Start Activity to log your first one.</div>')+'</section></div>'
+  +'<section class="card" aria-label="Badges"><div class="row between"><h3>Badges</h3><span class="small muted">'+Object.keys(S.badges).filter(k=>BADGES.some(b=>b.id===k)).length+' of '+BADGES.length+' earned</span></div><div class="badges">'+BADGES.map(b=>badgeEl(b,!!S.badges[b.id])).join('')+'</div></section>'
+  +'<div class="notice"><span>'+ico('shield',20)+'</span><span><b>Safety first.</b> Stop if you feel pain, dizziness or unwell. Stay hydrated and choose activities that suit your ability. <button class="link" data-act="safety">Read all tips</button></span></div></div>';
+}
+const fmtClock=s=>{s=Math.max(0,Math.floor(s));return pad(Math.floor(s/60))+':'+pad(s%60);};
+function remaining(ms){const d=ms-Date.now();if(d<=0)return '0 h';const h=Math.floor(d/3600000),days=Math.floor(h/24);return days>0?days+'d '+(h%24)+'h':h+'h '+Math.floor(d%3600000/60000)+'m';}
+function actRow(a){const t=TYPES[a.type];return '<div class="act-row"><div class="em">'+t.e+'</div><div class="grow"><b>'+t.n+'</b><div class="small muted">'+fmtDate(a.date)+' · '+a.min+' min'+(a.dist?' · '+a.dist+' km':'')+(a.src==='challenge'?' · challenge':'')+(a.src==='studybreak'?' · StudyBreak':'')+'</div></div><span class="pill sun">+'+a.pts+'</span></div>';}
+
+/* ---------- ACTIVITIES ---------- */
+function libList(){
+  const q=ui.q.trim().toLowerCase();
+  const items=LIB.filter(a=>(ui.cat==='All'||a.cats.includes(ui.cat))&&(!q||(a.name+' '+a.cats.join(' ')+' '+a.diff).toLowerCase().includes(q)));
+  return items.length?items.map(a=>'<button class="lib-card" data-act="libOpen" data-id="'+a.id+'"><span class="em">'+TYPES[a.type].e+'</span><b style="line-height:1.25">'+esc(a.name)+'</b><div class="row wrap" style="gap:6px"><span class="pill">'+ico('clock',13)+a.min+' min</span><span class="pill '+(a.diff==='Beginner'?'mint':a.diff==='Moderate'?'sun':'primary')+'">'+a.diff+'</span><span class="pill">'+a.env+'</span></div></button>').join(''):'<div class="empty" style="grid-column:1/-1">No activities match. Try another category or search word.</div>';
+}
+function vActivities(){
+  const t=ui.actTab;
+  let body='';
+  if(t==='lib'){
+    body='<div class="field" style="margin-bottom:12px"><label for="q" class="tiny muted" style="font-weight:600">Search activities</label><input id="q" type="search" placeholder="Search by name, category or difficulty" value="'+esc(ui.q)+'"></div><div class="row wrap" style="gap:8px;margin-bottom:16px" role="group" aria-label="Category filter">'+CATS.map(c=>'<button class="chip" data-act="cat" data-v="'+c+'" aria-pressed="'+(ui.cat===c)+'">'+c+'</button>').join('')+'</div><div class="grid g3" id="libList">'+libList()+'</div>';
+  }else{
+    const mode=ui.trend;let vals,labs,hi=-1;
+    if(mode==='week'){const ws=weekStart();vals=[0,1,2,3,4,5,6].map(i=>minsOn(dk(addD(ws,i))));labs=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];hi=(new Date().getDay()+6)%7;}
+    else{vals=[];labs=[];for(let w=5;w>=0;w--){const s=addD(weekStart(),-7*w);let sum=0;for(let i=0;i<7;i++)sum+=minsOn(dk(addD(s,i)));vals.push(sum);labs.push(w===0?'This wk':(s.getDate()+' '+MON[s.getMonth()]));}hi=5;}
+    const mFrom=dk(new Date(new Date().getFullYear(),new Date().getMonth(),1));const monthMin=S.acts.filter(a=>a.date>=mFrom).reduce((s,a)=>s+a.min,0);
+    const sorted=S.acts.map((a,i)=>[a,i]).sort((x,y)=>y[0].date.localeCompare(x[0].date)||y[1]-x[1]).map(x=>x[0]);
+    const groups={};sorted.slice(0,40).forEach(a=>{(groups[a.date]=groups[a.date]||[]).push(a);});
+    body='<div class="grid g2"><section class="card"><div class="row between wrap"><h3>'+(mode==='week'?'This week':'Last 6 weeks')+'</h3><div class="seg" role="tablist"><button role="tab" aria-selected="'+(mode==='week')+'" data-act="trend" data-v="week">Weekly</button><button role="tab" aria-selected="'+(mode==='month')+'" data-act="trend" data-v="month">Monthly</button></div></div>'+bars(vals,labs,{hi,h:110,label:'Minutes active'})+'<p class="small muted">Minutes active. '+plural(monthMin,'minute')+' logged this month.</p></section>'
+    +'<section class="card"><h3>Log an activity</h3><p class="muted small" style="margin:6px 0 14px">Log walking, running, cycling, sports, gym, yoga or anything else that got you moving.</p><div class="row wrap"><button class="btn btn-primary" data-act="startManual">'+ico('plus',18)+' Log manually</button><button class="btn btn-line" data-act="start">'+ico('play',18)+' Live timer</button></div>'+(S.demo?'<p class="tiny muted" style="margin-top:12px">Demo tracking mode: no device sensors are needed.</p>':'')+'</section></div>'
+    +'<section class="card" style="margin-top:16px"><h3 style="margin-bottom:6px">Activity log</h3>'+(sorted.length?Object.keys(groups).map(d=>'<p class="small muted" style="margin:14px 0 2px;font-weight:650">'+fmtDate(d)+'</p>'+groups[d].map(actRow).join('')).join(''):'<div class="empty">Nothing logged yet. Your first activity earns the First Step badge.</div>')+'</section>';
+  }
+  return '<div class="view-h"><h1>Activities</h1></div><div class="seg" role="tablist" style="margin-bottom:18px"><button role="tab" aria-selected="'+(t==='lib')+'" data-act="actTab" data-v="lib">Library</button><button role="tab" aria-selected="'+(t==='log')+'" data-act="actTab" data-v="log">My log</button></div>'+body
+  +'<div class="notice" style="margin-top:18px"><span>'+ico('shield',20)+'</span><span>Every activity here is beginner-friendly. Stop if anything hurts and choose what suits your ability.</span></div>';
+}
+function openLib(id){
+  const a=LIB.find(x=>x.id===id);if(!a)return;
+  openModal('<div class="stack" style="gap:16px"><div class="row" style="gap:14px"><span style="font-size:44px">'+TYPES[a.type].e+'</span><div><h2 style="font-size:26px">'+esc(a.name)+'</h2><div class="row wrap" style="gap:6px;margin-top:8px"><span class="pill">'+ico('clock',13)+a.min+' min</span><span class="pill primary">'+a.diff+'</span><span class="pill">'+a.env+'</span></div></div></div>'
+  +'<div><h3 style="font-size:17px;margin-bottom:10px">How to do it</h3><div class="stack" style="gap:10px">'+a.steps.map((s,i)=>'<div class="step-li"><b>'+(i+1)+'</b><span>'+esc(s)+'</span></div>').join('')+'</div></div>'
+  +'<div class="notice"><span>'+ico('shield',20)+'</span><span><b>Safety note.</b> '+esc(a.safety)+' Stop if you feel pain, dizziness or unwell.</span></div>'
+  +'<button class="btn btn-primary btn-lg btn-block" data-act="libStart" data-id="'+a.id+'">'+ico('play',18)+' Start this activity</button></div>');
+}
+
+/* ---------- START ACTIVITY SHEET ---------- */
+let st0=null,runTimer=null;
+const speed=()=>S&&S.set.fast?60:1;
+function stopRun(){clearInterval(runTimer);runTimer=null;}
+function openStart(pre={}){
+  st0={tab:pre.manual?'manual':'timer',type:pre.type||prefTypes()[0]||'walking',goal:pre.goal||S.user.minutes,phase:'pick',acc:0,t0:0,paused:false};
+  const m=openModal('<div id="sheetBody"></div>');drawStart();
+}
+function drawStart(){
+  const b=$('#sheetBody');if(!b||!st0)return;const s=st0;
+  const typeGrid='<div class="typegrid" role="group" aria-label="Activity type">'+Object.keys(TYPES).map(k=>'<button data-act="stType" data-v="'+k+'" aria-pressed="'+(s.type===k)+'"><span>'+TYPES[k].e+'</span>'+TYPES[k].n+'</button>').join('')+'</div>';
+  if(s.phase==='run'||s.phase==='pause'){
+    const el=(s.acc+(s.paused?0:(Date.now()-s.t0)*speed()))/1000;const goalS=s.goal*60;
+    b.innerHTML='<div class="center stack" style="align-items:center;gap:16px"><h2>'+TYPES[s.type].e+' '+TYPES[s.type].n+'</h2><div id="runRing">'+ring(el/goalS,{size:200,sw:16,inner:'<div class="timer-big" id="runClock">'+fmtClock(el)+'</div><span class="small muted">goal '+s.goal+' min</span>'})+'</div>'
+    +'<div class="row" style="gap:26px"><div class="stat center"><b id="runSteps">'+Math.round(el/60*(TYPES[s.type].spm||0))+'</b><span class="small muted">est. steps</span></div><div class="stat center"><b id="runPts">'+Math.min(100,10+Math.max(1,Math.round(el/60)))+'</b><span class="small muted">points</span></div></div>'
+    +'<div class="row wrap" style="justify-content:center"><button class="btn btn-line btn-lg" data-act="runPause">'+(s.paused?ico('play',18)+' Resume':ico('pause',18)+' Pause')+'</button><button class="btn btn-primary btn-lg" data-act="runFinish">'+ico('check',18)+' Finish and save</button></div>'
+    +'<button class="link small" data-act="runDiscard">Discard this session</button><p class="tiny muted">'+(S.set.fast?'Demo speed is on: 1 second counts as 1 minute.':'Tip: in Demo controls you can turn on demo speed.')+'</p></div>';
+    return;
+  }
+  const manual=s.tab==='manual';
+  b.innerHTML='<h2 style="font-size:26px;margin-bottom:14px">Start activity</h2><div class="seg" role="tablist" style="margin-bottom:16px"><button role="tab" aria-selected="'+(!manual)+'" data-act="stTab" data-v="timer">Live timer</button><button role="tab" aria-selected="'+manual+'" data-act="stTab" data-v="manual">Log manually</button></div>'
+  +'<div class="stack" style="gap:16px"><div><p class="small" style="font-weight:650;margin-bottom:8px">What are you doing?</p>'+typeGrid+'</div>'
+  +(manual?'<div class="grid" style="grid-template-columns:1fr 1fr;gap:12px"><div class="field"><label for="m-min">Duration (minutes)</label><input id="m-min" type="number" min="1" max="300" value="'+s.goal+'" inputmode="numeric"></div>'+(TYPES[s.type].dist?'<div class="field"><label for="m-dist">Distance (km, optional)</label><input id="m-dist" type="number" min="0" step="0.1" inputmode="decimal" placeholder="e.g. 2.5"></div>':'<div></div>')+'</div><div class="field"><label for="m-date">Date</label><select id="m-date">'+[0,1,2,3,4,5,6].map(i=>'<option value="'+dk(addD(new Date(),-i))+'">'+(i===0?'Today':i===1?'Yesterday':fmtDate(dk(addD(new Date(),-i))))+'</option>').join('')+'</select></div><button class="btn btn-primary btn-lg btn-block" data-act="manualSave">Save activity</button>'
+   :'<div><p class="small" style="font-weight:650;margin-bottom:8px">Time goal</p><div class="row wrap" style="gap:8px" role="group" aria-label="Time goal">'+[5,10,15,20,30,45].map(m=>'<button class="chip" data-act="stGoal" data-v="'+m+'" aria-pressed="'+(s.goal===m)+'">'+m+' min</button>').join('')+'</div></div><button class="btn btn-primary btn-lg btn-block" data-act="runStart">'+ico('play',18)+' Start</button>')
+  +'<p class="tiny muted">Stop if you feel pain, dizziness or unwell. Choose activities that suit your ability.</p></div>';
+}
+function runTick(){
+  const s=st0;if(!s||s.phase!=='run'||!$('#runClock')){if(!$('#runClock'))stopRun();return;}
+  const el=(s.acc+(Date.now()-s.t0)*speed())/1000,goalS=s.goal*60;
+  $('#runClock').textContent=fmtClock(el);$('#runSteps').textContent=Math.round(el/60*(TYPES[s.type].spm||0));$('#runPts').textContent=Math.min(100,10+Math.max(1,Math.round(el/60)));
+  const c=$('#runRing circle.rfill');if(c){const r=+c.getAttribute('r'),C=2*Math.PI*r;c.style.animation='none';c.setAttribute('stroke-dashoffset',C*(1-clamp(el/goalS,0,1)));}
+}
+
+/* ---------- CHALLENGES ---------- */
+function vChallenges(){
+  const t=ui.chTab;let body='';
+  if(t==='daily'){
+    const list=dailyChallenges(),done=S.cdone[TODAY()]||[];const ad=adapt();
+    body='<section class="card"><div class="row between wrap"><div><h3>Today\'s challenges</h3><p class="small muted">'+esc(ad.note)+'</p></div><span class="pill primary">'+ad.label+' level</span></div><div class="stack" style="margin-top:14px;gap:10px">'
+    +list.map(c=>{const d=done.includes(c.id);return '<div class="ch-item '+(d?'done':'')+'"><div class="em">'+c.e+'</div><div class="grow"><b style="display:block">'+esc(c.title)+'</b><span class="small muted">'+esc(c.why)+' · about '+c.mins+' min · +'+c.pts+' pts</span></div><button class="ch-check" data-act="doChallenge" data-id="'+c.id+'" aria-label="'+(d?'Completed':'Mark complete')+': '+esc(c.title)+'" '+(d?'disabled':'')+'>'+ico('check',22)+'</button></div>';}).join('')+'</div>'
+    +'<p class="small muted" style="margin-top:14px">'+(done.length>=3?'All three done. Challenge Completed badge earned.':'Finish all 3 today to earn the Challenge Completed badge.')+'</p></section>'
+    +'<div class="notice primary" style="margin-top:16px"><span>'+ico('gauge',20)+'</span><span>Challenges adapt to your last 7 days and your check-in. Completing most of them makes tomorrow a little bigger. Missing a few makes it lighter.</span></div>';
+  }else if(t==='team'){
+    body='<div class="row between wrap" style="margin-bottom:14px"><p class="muted">Work together toward a shared activity target.</p><button class="btn btn-primary btn-sm" data-act="newTeam">'+ico('plus',16)+' Create challenge</button></div><div class="stack" style="gap:16px">'+S.teams.map(teamCard).join('')+'</div>';
+  }else{
+    body=vEvent();
+  }
+  return '<div class="view-h"><h1>Challenges</h1></div><div class="seg" role="tablist" style="margin-bottom:18px"><button role="tab" aria-selected="'+(t==='daily')+'" data-act="chTab" data-v="daily">Daily</button><button role="tab" aria-selected="'+(t==='team')+'" data-act="chTab" data-v="team">Class & teams</button><button role="tab" aria-selected="'+(t==='event')+'" data-act="chTab" data-v="event">Campus event</button></div>'+body;
+}
+function teamCard(t){
+  const pct=clamp(t.done/t.target*100,0,100),mem=t.members.slice().sort((a,b)=>b.n-a.n);
+  return '<section class="card"><div class="row between wrap" style="align-items:flex-start"><div><h3>'+esc(t.name)+'</h3><p class="small muted">'+esc(t.cls)+' · '+remaining(t.end)+' remaining</p></div><button class="btn btn-sm '+(t.joined?'btn-line':'btn-primary')+'" data-act="'+(t.joined?'leaveTeam':'joinTeam')+'" data-id="'+t.id+'">'+(t.joined?'Leave':'Join')+'</button></div>'
+  +'<div class="bar mint" style="margin:14px 0 6px"><i style="width:'+pct+'%"></i></div><div class="row between small muted"><span>'+t.done+' of '+t.target+' activities completed</span><span>'+Math.round(pct)+'%</span></div>'
+  +'<div class="grid g4" style="margin-top:14px;gap:10px"><div class="tile"><b style="font-size:22px;font-family:var(--font-display)">'+t.members.length+'</b><div class="tiny muted">members participating</div></div><div class="tile"><b style="font-size:22px;font-family:var(--font-display)">'+t.done+'</b><div class="tiny muted">activities completed</div></div><div class="tile"><b style="font-size:22px;font-family:var(--font-display)">'+t.pts.toLocaleString()+'</b><div class="tiny muted">team points</div></div><div class="tile"><b style="font-size:22px;font-family:var(--font-display)">'+remaining(t.end)+'</b><div class="tiny muted">time remaining</div></div></div>'
+  +'<div class="row" style="margin-top:14px;gap:6px;flex-wrap:wrap">'+mem.slice(0,8).map(m=>'<span title="'+esc(m.nick)+': '+m.n+' activities" style="display:flex;align-items:center;gap:6px;background:var(--surface2);border-radius:99px;padding:3px 10px 3px 3px;font-size:12.5px">'+avatar(m.me?myName():m.nick,24)+esc(m.me?myName()+' (you)':m.nick)+' · '+m.n+'</span>').join('')+(mem.length>8?'<span class="small muted">+'+(mem.length-8)+' more</span>':'')+'</div></section>';
+}
+function vEvent(){
+  const e=S.event,ea=eventActs(),teams=e.teams.map(x=>({d:x[0],p:x[1]+(x[0]===S.user.dept?ea.reduce((s,a)=>s+a.pts,0):0)})).sort((a,b)=>b.p-a.p);
+  const maxP=teams[0].p,total=e.base.activities+ea.length,part=e.base.participants+(e.joined?1:0);
+  const cd=Math.max(0,e.end-Date.now()),d=Math.floor(cd/86400000),h=Math.floor(cd%86400000/3600000),m=Math.floor(cd%3600000/60000),s=Math.floor(cd%60000/1000);
+  return '<section class="card hero-card"><div style="position:relative;z-index:1"><span class="pill" style="background:rgba(255,255,255,.18);color:#fff">Campus Fitness Event</span><h2 style="font-size:32px;margin:12px 0 4px">'+esc(e.name)+'</h2><p class="muted">Earn points by taking part. Every activity counts for your department.</p>'
+  +'<div class="row wrap" style="gap:12px;margin:18px 0" id="evCountdown" aria-label="Event countdown">'+[['d',d],['h',h],['m',m],['s',s]].map(x=>'<div style="background:rgba(255,255,255,.14);border-radius:16px;padding:10px 16px;min-width:70px;text-align:center"><b data-cd="'+x[0]+'" style="font-family:var(--font-display);font-size:30px;display:block;line-height:1.1">'+pad(x[1])+'</b><span class="tiny" style="opacity:.8">'+({d:'days',h:'hours',m:'min',s:'sec'})[x[0]]+'</span></div>').join('')+'</div>'
+  +(e.joined?'<span class="pill mint">You are in. +30 join bonus earned</span>':'<button class="btn btn-primary btn-lg" data-act="joinEvent">Join event (+30 points)</button>')+'</div></section>'
+  +'<div class="grid g3" style="margin-top:16px"><div class="card sm"><div class="stat"><b>'+part.toLocaleString()+'</b><span class="small muted">participants</span></div></div><div class="card sm"><div class="stat"><b>'+total.toLocaleString()+'</b><span class="small muted">activities completed</span></div></div><div class="card sm"><div class="stat"><b>'+ea.length+'</b><span class="small muted">your event activities</span></div></div></div>'
+  +'<section class="card" style="margin-top:16px"><h3 style="margin-bottom:12px">Team rankings</h3><div class="stack" style="gap:10px">'+teams.map((t,i)=>'<div class="hbar" style="grid-template-columns:72px 1fr 64px"><span><b>#'+(i+1)+'</b> '+t.d+(t.d===S.user.dept?' <span class="pill primary" style="padding:0 6px">you</span>':'')+'</span><div class="bar"><i style="width:'+t.p/maxP*100+'%"></i></div><span class="small muted" style="text-align:right">'+t.p.toLocaleString()+'</span></div>').join('')+'</div></section>'
+  +'<section class="card" style="margin-top:16px"><h3 style="margin-bottom:6px">Event badges</h3><div class="badges">'+EVBADGES.map(b=>badgeEl(b,!!S.badges[b.id])).join('')+'</div></section>';
+}
+
+/* ---------- LEADERBOARD ---------- */
+function lbRows(){
+  const rows=board(ui.lbScope,ui.lbMetric),m=ui.lbMetric;
+  let show=rows.slice(0,10);const me=rows.find(r=>r.me);
+  const mkRow=r=>'<div class="lb-row '+(r.me?'me':'')+'" data-rid="'+r.id+'"><div class="lb-rank">'+(r.rank<=3?['🥇','🥈','🥉'][r.rank-1]:r.rank)+'</div><div class="row" style="gap:10px;min-width:0">'+avatar(r.nick)+'<div style="min-width:0"><b style="display:block;overflow:hidden;text-overflow:ellipsis">'+esc(r.nick)+(r.me?' (you)':'')+'</b><div class="meta"><span>'+r.cls+'</span><span>'+r.ch+' challenges</span><span>'+ico('flame',12)+r.streak+' day streak</span></div></div></div><div class="lb-pts">'+r[m].toLocaleString()+'<div class="tiny muted" style="font-family:var(--font-body);font-weight:500">points</div></div></div>';
+  let html=show.map(mkRow).join('');
+  if(!S.set.showBoard){html=show.filter(r=>!r.me).map(mkRow).join('');}
+  else if(me&&me.rank>10)html+='<div class="center muted small">···</div>'+mkRow(me);
+  return html;
+}
+function vLeaderboard(){
+  const cr=myRank('college',ui.lbMetric),clr=myRank('class',ui.lbMetric),dr=myRank('dept',ui.lbMetric);
+  const nC=board('college','week').length,nCl=board('class','week').length,nD=board('dept','week').length;
+  return '<div class="view-h"><h1>Leaderboard</h1><p class="muted">Ranked by activity points only. Never by body size or appearance.</p></div>'
+  +'<section class="card hero-card"><div class="row wrap" style="gap:24px;position:relative;z-index:1"><div><span class="small muted">My rank</span><div style="font-family:var(--font-display);font-size:64px;font-weight:800;line-height:1" id="myRankBig">#'+cr+'</div><span class="small muted">of '+nC+' in college</span></div>'
+  +'<div class="grid g3 grow" style="gap:10px;min-width:240px"><div style="background:rgba(255,255,255,.14);border-radius:16px;padding:12px 14px"><span class="small muted">My class</span><b style="display:block;font-size:20px;font-family:var(--font-display)">'+esc(S.user.cls)+' · #'+clr+' <span class="small" style="font-weight:500">of '+nCl+'</span></b></div><div style="background:rgba(255,255,255,.14);border-radius:16px;padding:12px 14px"><span class="small muted">My department</span><b style="display:block;font-size:20px;font-family:var(--font-display)">'+esc(S.user.dept)+' · #'+dr+' <span class="small" style="font-weight:500">of '+nD+'</span></b></div><div style="background:rgba(255,255,255,.14);border-radius:16px;padding:12px 14px"><span class="small muted">Shown as</span><b style="display:block;font-size:20px;font-family:var(--font-display)">'+esc(myName())+'</b></div></div></div></section>'
+  +'<div class="row between wrap" style="margin:18px 0 12px;gap:10px"><div class="seg" role="tablist"><button role="tab" aria-selected="'+(ui.lbScope==='college')+'" data-act="lbScope" data-v="college">College</button><button role="tab" aria-selected="'+(ui.lbScope==='class')+'" data-act="lbScope" data-v="class">My class</button><button role="tab" aria-selected="'+(ui.lbScope==='dept')+'" data-act="lbScope" data-v="dept">My department</button></div><div class="seg" role="tablist"><button role="tab" aria-selected="'+(ui.lbMetric==='week')+'" data-act="lbMetric" data-v="week">This week</button><button role="tab" aria-selected="'+(ui.lbMetric==='total')+'" data-act="lbMetric" data-v="total">All time</button></div></div>'
+  +(S.set.showBoard?'':'<div class="notice" style="margin-bottom:12px"><span>'+ico('lock',18)+'</span><span>You are hidden from the public leaderboard. You can change this in Profile, Privacy.</span></div>')
+  +'<div class="lb" id="lbList" role="list">'+lbRows()+'</div>'
+  +(S.demo?'<div class="row" style="margin-top:16px"><button class="btn btn-line" data-act="simPeers">Simulate classmates being active</button></div>':'');
+}
+function redrawLB(animate){
+  const box=$('#lbList');if(!box)return;const old={};$$('.lb-row',box).forEach(r=>{old[r.dataset.rid]=r.getBoundingClientRect().top;});
+  box.innerHTML=lbRows();
+  if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)$$('.lb-row',box).forEach(r=>{const o=old[r.dataset.rid];if(o!=null){const dy=o-r.getBoundingClientRect().top;if(Math.abs(dy)>2)r.animate([{transform:'translateY('+dy+'px)'},{transform:'none'}],{duration:700,easing:'cubic-bezier(.2,.8,.2,1)'});}else r.animate([{opacity:0},{opacity:1}],{duration:500});});
+  const big=$('#myRankBig');if(big)big.textContent='#'+myRank('college',ui.lbMetric);
+}
+
+/* ---------- INSIGHTS ---------- */
+function vInsights(){
+  const from=dk(addD(new Date(),-28)),A=S.acts.filter(a=>a.date>=from);
+  if(!S.acts.length)return '<div class="view-h"><h1>My Insights</h1></div><div class="empty">Log a few activities to see your patterns. Insights appear after your first activity.</div>';
+  const byDow=[0,0,0,0,0,0,0],cnt=[0,0,0,0,0,0,0];
+  for(let i=0;i<28;i++){const d=addD(new Date(),-i);cnt[d.getDay()]++;}
+  A.forEach(a=>{byDow[parseK(a.date).getDay()]+=a.min;});
+  const avgDow=byDow.map((v,i)=>Math.round(v/Math.max(1,cnt[i])));
+  const order=[1,2,3,4,5,6,0],dv=order.map(i=>avgDow[i]),dl=order.map(i=>DOW[i].slice(0,3));
+  const topI=avgDow.indexOf(Math.max(...avgDow)),topPos=order.indexOf(topI);
+  const weeks=[],wl=[];for(let w=7;w>=0;w--){const s=addD(weekStart(),-7*w);let sum=0;for(let i=0;i<7;i++)sum+=minsOn(dk(addD(s,i)));weeks.push(sum);wl.push(w===0?'Now':s.getDate()+' '+MON[s.getMonth()]);}
+  let off=0,dn=0;for(let i=0;i<14;i++){const k=dk(addD(new Date(),-i));if(S.offered[k]){off+=S.offered[k];dn+=(S.cdone[k]||[]).length;}}
+  const rate=off?Math.round(dn/off*100):0;
+  let woff=0,wdn=0;for(let i=0;i<7;i++){const k=dk(addD(weekStart(),i));if(S.offered[k]){woff+=S.offered[k];wdn+=(S.cdone[k]||[]).length;}}
+  const wrate=woff?Math.round(wdn/woff*100):null;
+  const tc=typeCounts(28),tk=Object.keys(tc).sort((a,b)=>tc[b]-tc[a]),tsum=tk.reduce((s,k)=>s+tc[k],0);
+  const avg=A.length?Math.round(A.reduce((s,a)=>s+a.min,0)/A.length):0;
+  const bd=[];for(let i=13;i>=0;i--)bd.push(S.breaks.includes(dk(addD(new Date(),-i))));
+  const bn=bd.filter(Boolean).length;
+  const weekend=(avgDow[0]+avgDow[6])>=(avgDow[1]+avgDow[2]+avgDow[3]+avgDow[4]+avgDow[5])/2.5&&(topI===0||topI===6);
+  const lines=[];
+  lines.push(weekend?'You were most active on weekends.':'You were most active on '+DOWF[topI]+'.');
+  if(wrate!==null)lines.push('You completed '+wrate+'% of your challenges this week.');
+  lines.push('Your current streak is '+streak()+' '+(streak()===1?'day':'days')+'.');
+  if(tk.length)lines.push(TYPES[tk[0]].n+' is your most frequent activity: '+tc[tk[0]]+' of '+tsum+' sessions in the last 4 weeks.');
+  lines.push('You took a StudyBreak on '+bn+' of the last 14 days.');
+  const c=[TYPES,0];const donutColors=['#3B4BFF','#0FA57A','#FFB800','#E8489B','#8A5CF6','#12A4C8','#FF6B3D'];
+  let acc=0;const conic=tk.map((k,i)=>{const p=tc[k]/tsum*100;const s=donutColors[i%7]+' '+acc+'% '+(acc+p)+'%';acc+=p;return s;}).join(',');
+  return '<div class="view-h"><h1>My Insights</h1><p class="muted">Simple patterns from your own activity. These are not medical advice.</p></div>'
+  +'<section class="card"><h3 style="margin-bottom:10px">What we noticed</h3><div class="stack" style="gap:8px">'+lines.map(l=>'<div class="row" style="gap:10px;align-items:flex-start"><span style="color:var(--primary);margin-top:3px">'+ico('spark',16)+'</span><span>'+esc(l)+'</span></div>').join('')+'</div></section>'
+  +'<div class="grid g2" style="margin-top:16px"><section class="card"><h3>Most active days</h3><p class="small muted">Average minutes per day, last 4 weeks</p>'+bars(dv,dl,{hi:topPos,h:100,label:'Average minutes by weekday'})+'</section>'
+  +'<section class="card"><h3>Weekly activity trend</h3><p class="small muted">Minutes per week, last 8 weeks</p>'+lineChart(weeks,wl)+'</section></div>'
+  +'<div class="grid g4" style="margin-top:16px"><div class="card sm"><div class="row" style="gap:14px">'+ring(rate/100,{size:76,sw:9,color:'var(--mint)',inner:'<b style="font-size:16px">'+rate+'%</b>'})+'<div><b>Challenge completion</b><div class="tiny muted">last 14 days</div></div></div></div>'
+  +'<div class="card sm"><div class="stat"><b style="color:var(--flame)">'+streak()+'</b><span class="small muted">current streak (days)</span></div></div>'
+  +'<div class="card sm"><div class="stat"><b>'+avg+' min</b><span class="small muted">average activity duration</span></div></div>'
+  +'<div class="card sm"><div class="stat"><b>'+Math.round(A.reduce((s,a)=>s+a.min,0)/4)+' min</b><span class="small muted">average per week</span></div></div></div>'
+  +'<div class="grid g2" style="margin-top:16px"><section class="card"><h3 style="margin-bottom:12px">Preferred activities</h3><div class="row" style="gap:20px;align-items:center"><div class="donut" style="background:conic-gradient('+(conic||'var(--surface2) 0 100%')+')" role="img" aria-label="Activity mix"></div><div class="stack grow" style="gap:6px">'+tk.slice(0,5).map((k,i)=>'<div class="row" style="gap:8px;font-size:14px"><i style="width:12px;height:12px;border-radius:4px;background:'+donutColors[i%7]+';display:block"></i><span class="grow">'+TYPES[k].n+'</span><b>'+Math.round(tc[k]/tsum*100)+'%</b></div>').join('')+'</div></div></section>'
+  +'<section class="card"><h3>Study-break consistency</h3><p class="small muted" style="margin-bottom:12px">Last 14 days. Filled means you took a break.</p><div class="dots" role="img" aria-label="'+bn+' of 14 days with a StudyBreak">'+bd.map((b,i)=>'<i class="'+(b?'on':'')+(i===13?' today':'')+'"></i>').join('')+'</div><p style="margin-top:12px"><b>'+Math.round(bn/14*100)+'%</b> <span class="muted">of days</span></p></section></div>';
+}
+
+/* ---------- PROFILE ---------- */
+const sw=(k,label,desc)=>'<div class="row between" style="gap:14px;padding:12px 0;border-bottom:1px solid var(--line)"><div><b>'+label+'</b>'+(desc?'<div class="small muted">'+desc+'</div>':'')+'</div><button class="sw" role="switch" aria-checked="'+!!S.set[k]+'" aria-label="'+esc(label)+'" data-act="toggle" data-k="'+k+'"></button></div>';
+function vProfile(){
+  const lv=level(),u=S.user;
+  return '<div class="view-h"><h1>Profile</h1></div>'
+  +'<section class="card"><div class="row wrap" style="gap:18px">'+avatar(u.nick,64)+'<div class="grow"><h2 style="font-size:26px">'+esc(myName())+'</h2><p class="muted small">'+esc(u.school||'-')+' · Level '+(lv.i+1)+' '+lv.name+'</p></div><span class="pill sun">⭐ '+totalPts().toLocaleString()+' pts</span></div>'
+  +'<div class="bar sun" style="margin:16px 0 6px"><i style="width:'+lv.pct*100+'%"></i></div><p class="tiny muted">'+(lv.next>0?lv.next+' points to the next level':'Top level reached')+'</p></section>'
+  +'<div class="grid g2" style="margin-top:16px"><section class="card"><h3 style="margin-bottom:12px">Profile settings</h3><div class="stack" style="gap:12px"><div class="field"><label for="p-nick">Nickname</label><input id="p-nick" maxlength="18" value="'+esc(u.nick)+'"></div><div class="field"><label for="p-name">Real name (private)</label><input id="p-name" maxlength="40" value="'+esc(u.name)+'"></div><div class="field"><label for="p-school">School / College</label><input id="p-school" maxlength="60" value="'+esc(u.school||'')+'"></div><div class="field"><label>Email</label><input value="'+esc(u.email)+'" disabled></div><div class="row wrap" style="gap:8px"><button class="btn btn-line btn-sm" data-act="chgPw">Change password</button></div>'
+  +'<div class="field"><label for="p-goal">Personal activity goal</label><select id="p-goal">'+GOALS.map(g=>'<option '+(g.n===u.goal?'selected':'')+'>'+g.n+'</option>').join('')+'</select></div>'
+  +'<div class="field"><label for="p-min">Available time each day</label><select id="p-min">'+[10,20,30,45].map(m=>'<option value="'+m+'" '+(m===u.minutes?'selected':'')+'>'+m+(m===45?'+':'')+' minutes</option>').join('')+'</select></div><button class="btn btn-primary" data-act="saveProfile">Save changes</button></div></section>'
+  +'<section class="card"><h3>Your activity profile</h3><div class="stack" style="gap:8px;margin:12px 0"><div class="row between"><span class="muted">Age group</span><b>'+esc(u.age||'-')+'</b></div><div class="row between"><span class="muted">Activity level</span><b>'+esc(u.level||'-')+'</b></div><div class="row between"><span class="muted">Setting</span><b>'+esc(u.env)+'</b></div></div><div class="row wrap" style="gap:6px">'+u.prefs.map(p=>'<span class="pill primary">'+esc(p)+'</span>').join('')+'</div><button class="btn btn-line btn-sm" style="margin-top:14px" data-act="redoOnboard">Update preferences</button>'
+  +'<h3 style="margin:22px 0 4px">Appearance</h3><div class="seg" role="tablist" style="margin-top:8px"><button role="tab" aria-selected="'+!isDark()+'" data-act="setTheme" data-v="light">Light</button><button role="tab" aria-selected="'+isDark()+'" data-act="setTheme" data-v="dark">Dark</button></div></section></div>'
+  +'<div class="grid g2" style="margin-top:16px"><section class="card"><h3>Privacy</h3><p class="small muted">You control how you appear to others.</p>'+sw('useNick','Show my nickname instead of my real name','Leaderboards and teams use your nickname.')+sw('showBoard','Appear on the college leaderboard','Turn off to keep your rank private.')+sw('shareClass','Share my activity count with my class','Teammates see counts only, never details.')+'<p class="tiny muted" style="margin-top:12px">Your data stays on this device in this prototype. Welfare dashboards see only grouped totals.</p></section>'
+  +'<section class="card"><h3>Notifications and reminders</h3>'+sw('remChallenge','Daily challenge reminder','Sent at '+esc(S.set.remTime)+'.')+'<div class="field" style="padding:12px 0;border-bottom:1px solid var(--line)"><label for="s-time">Reminder time</label><input id="s-time" type="time" value="'+S.set.remTime+'" data-change="remTime"></div>'+sw('remBreak','StudyBreak nudges','A gentle prompt after long study blocks.')
+  +'<div class="field" style="padding:12px 0;border-bottom:1px solid var(--line)"><label for="s-be">Nudge me after</label><select id="s-be" data-change="breakEvery">'+[25,45,60].map(m=>'<option value="'+m+'" '+(m===S.set.breakEvery?'selected':'')+'>'+m+' minutes</option>').join('')+'</select></div>'+sw('remWeekly','Weekly summary','A short recap every Sunday.')
+  +'<button class="btn btn-line btn-sm" style="margin-top:14px" data-act="testReminder">Send a test reminder</button></section></div>'
+  +'<section class="card" style="margin-top:16px"><div class="row between wrap"><div><h3>Badges</h3><p class="small muted">Tap a badge to see how to earn it.</p></div></div><div class="badges">'+BADGES.map(b=>badgeEl(b,!!S.badges[b.id])).join('')+'</div></section>'
+  +'<div class="row wrap" style="margin-top:16px;gap:10px"><button class="btn btn-line" data-act="go" data-v="admin">'+ico('shield',18)+' Welfare dashboard (demo)</button><button class="btn btn-line" data-act="safety">Safety tips</button>'+(S.demo?'<button class="btn btn-line" data-act="resetDemo">Reset demo data</button>':'')+'<button class="btn btn-line" data-act="logout">Log out</button></div>';
+}
+
+/* ---------- COACH ---------- */
+function coachInit(){ui.chat=[{who:'ai',text:'Hi '+S.user.nick+'. Tell me how much time you have and how you feel, and I will suggest something simple. Try "I have only 15 minutes today."'}];}
+function chatHtml(){return ui.chat.map((m,i)=>m.typing?'<div class="msg ai typing" aria-label="Coach is typing"><i></i><i></i><i></i></div>':'<div class="msg '+m.who+'">'+esc(m.text)+(m.blocks?'<div class="plan">'+m.blocks.map(b=>'<div class="row" style="gap:10px">'+TYPES[b.type].e+'<b>'+b.min+' min</b><span class="muted small">'+LBL[b.type][1]+'</span></div>').join('')+'<button class="btn btn-primary btn-sm" data-act="coachStart" data-i="'+i+'" style="margin-top:6px">'+ico('play',14)+' Start first step</button></div>':'')+'</div>').join('');}
+function vCoach(){
+  if(!ui.chat)coachInit();
+  const chips=['I have only 15 minutes today','I feel tired','Something outdoors','A quick study break','Help me reach my weekly goal'];
+  return '<div class="view-h"><h1>AI Fitness Coach</h1></div><div class="notice" style="margin-bottom:14px"><span>'+ico('info'in IC?'info':'shield',20)+'</span><span><b>General guidance only.</b> This coach shares general fitness ideas and is not a medical professional. For health concerns, speak to a doctor or trusted adult.</span></div>'
+  +'<section class="card"><div class="chat" id="chatLog" aria-live="polite">'+chatHtml()+'</div><div class="row wrap" style="gap:8px;margin:16px 0 10px">'+chips.map(c=>'<button class="chip" data-act="chip" data-v="'+esc(c)+'">'+esc(c)+'</button>').join('')+'</div>'
+  +'<div class="row" style="gap:10px"><div class="field grow"><label for="chatIn" class="hidden">Message</label><input id="chatIn" placeholder="e.g. I have 20 minutes and prefer indoors" autocomplete="off"></div><button class="btn btn-primary" data-act="chatSend">Send</button></div>'
+  +'<p class="tiny muted" style="margin-top:12px">Suggestions use your preferred activities, available time, recent activity, goal and activity level. The coach runs on your device with simple rules in this prototype.</p></section>';
+}
+function askCoach(q){
+  if(!q.trim())return;if(!ui.chat)coachInit();
+  ui.chat.push({who:'me',text:q});const ti={typing:true};ui.chat.push(ti);paintChat();
+  setTimeout(()=>{const i=ui.chat.indexOf(ti);if(i<0)return;const r=coachReply(q);ui.chat[i]={who:'ai',text:r.text,blocks:r.blocks};paintChat();ui.demoSeen.ai=true;},750);
+}
+function paintChat(){const l=$('#chatLog');if(l){l.innerHTML=chatHtml();l.scrollTop=l.scrollHeight;}}
+
+/* ---------- STUDYBREAK ---------- */
+function vStudy(){
+  const last14=[];for(let i=13;i>=0;i--)last14.push(S.breaks.includes(dk(addD(new Date(),-i))));
+  return '<div class="view-h"><h1>StudyBreak</h1><p class="muted">Long study blocks add up. A 5-minute reset helps you come back fresher.</p></div>'
+  +'<div class="grid g2"><section class="card hero-card"><div style="position:relative;z-index:1"><h2 style="font-size:28px">'+(clock.studyOn?'Studying for <span id="studyClock">'+fmtClock(clock.study*60)+'</span>':'Ready when you are')+'</h2><p class="muted" style="margin:8px 0 18px">We will nudge you after '+S.set.breakEvery+' minutes'+(S.set.fast?' (demo speed on)':'')+'.</p><div class="row wrap"><button class="btn btn-primary btn-lg" data-act="breakOpen">'+ico('cup',18)+' Start 5-Minute Break</button><button class="btn btn-line btn-lg" style="color:#fff;border-color:rgba(255,255,255,.5)" data-act="studyToggle">'+(clock.studyOn?'Stop study session':'Start study session')+'</button></div></div></section>'
+  +'<section class="card"><h3>Consistency</h3><p class="small muted" style="margin-bottom:12px">Last 14 days</p><div class="dots">'+last14.map((b,i)=>'<i class="'+(b?'on':'')+(i===13?' today':'')+'"></i>').join('')+'</div><p style="margin-top:12px"><b>'+S.breaks.length+'</b> <span class="muted">total breaks · +20 points each</span></p></section></div>'
+  +'<section class="card" style="margin-top:16px"><h3 style="margin-bottom:12px">Break ideas</h3><div class="grid g4">'+Object.keys(BREAK_OPTS).map(k=>'<div class="tile"><div style="font-size:26px">'+BREAK_OPTS[k].e+'</div><b>'+BREAK_OPTS[k].n+'</b><p class="small muted">'+esc(BREAK_OPTS[k].cues[0])+'</p></div>').join('')+'</div></section>';
+}
+let brk=null;
+function openBreak(auto){
+  brk={opt:'walk',phase:'pick',left:300,t0:0};
+  openModal('<div id="brkBody"></div>');drawBreak();
+}
+function drawBreak(){
+  const b=$('#brkBody');if(!b||!brk)return;
+  if(brk.phase==='pick'){
+    b.innerHTML='<h2 style="font-size:26px">You\'ve been studying for a while</h2><p class="muted" style="margin:6px 0 16px">Take a 5-minute movement break. Pick what feels good.</p><div class="typegrid" role="group" aria-label="Break type">'+Object.keys(BREAK_OPTS).map(k=>'<button data-act="brkOpt" data-v="'+k+'" aria-pressed="'+(brk.opt===k)+'"><span>'+BREAK_OPTS[k].e+'</span>'+BREAK_OPTS[k].n+'</button>').join('')+'</div>'
+    +'<button class="btn btn-mint btn-lg btn-block" style="margin-top:18px" data-act="brkStart">'+ico('cup',18)+' Start 5-Minute Break</button><p class="tiny muted" style="margin-top:12px">Stay hydrated. Stop if you feel dizzy, in pain or unwell.</p>';
+  }else if(brk.phase==='run'){
+    b.innerHTML='<div class="center stack" style="align-items:center;gap:14px"><h2>'+BREAK_OPTS[brk.opt].e+' '+BREAK_OPTS[brk.opt].n+' break</h2><div id="brkRing">'+ring(1-brk.left/300,{size:190,sw:15,color:'var(--mint)',inner:'<div class="timer-big" id="brkClock">'+fmtClock(brk.left)+'</div>'})+'</div><p id="brkCue" style="max-width:26em;font-size:18px;min-height:56px">'+esc(BREAK_OPTS[brk.opt].cues[0])+'</p><button class="link small" data-act="brkSkip">End break early</button></div>';
+  }else{
+    b.innerHTML='<div class="center stack" style="align-items:center;gap:12px"><div style="font-size:52px">🎉</div><h2>Break complete</h2><p class="muted">You earned +20 points and kept your study-break habit going.</p><button class="btn btn-primary btn-lg" data-act="closeModal">Back to it</button></div>';
+  }
+}
+function brkTick(){
+  if(!brk||brk.phase!=='run'||!$('#brkClock')){if(!$('#brkClock')&&brk&&brk.phase==='run'){clearInterval(brk.timer);}return;}
+  brk.left-=speed();if(brk.left<=0){finishBreak();return;}
+  $('#brkClock').textContent=fmtClock(brk.left);
+  const c=$('#brkRing circle.rfill');if(c){const r=+c.getAttribute('r'),C=2*Math.PI*r;c.style.animation='none';c.setAttribute('stroke-dashoffset',C*(brk.left/300));}
+  const idx=Math.min(4,Math.floor((300-brk.left)/60));const cue=$('#brkCue');if(cue)cue.textContent=BREAK_OPTS[brk.opt].cues[idx];
+}
+function finishBreak(early){
+  if(!brk)return;clearInterval(brk.timer);const used=early?Math.max(1,Math.round((300-brk.left)/60)):5;
+  S.breaks.push(TODAY());addPts(20,'StudyBreak');
+  const res=logActivity({type:BREAK_OPTS[brk.opt].type,min:used,src:'studybreak',note:'StudyBreak',quiet:true});
+  res.pts+=20;clock.since=0;brk.phase='done';drawBreak();
+  toast('+'+res.pts+' points','sun');if(res.newB.length)setTimeout(()=>showBadgeUnlock(res.newB),600);save();refresh();
+}
+function showBreakBanner(){
+  if($('.banner'))return;const b=document.createElement('div');b.className='banner';b.setAttribute('role','alertdialog');b.setAttribute('aria-label','StudyBreak suggestion');
+  b.innerHTML='<div class="row" style="gap:14px;align-items:flex-start"><div style="font-size:32px">☕</div><div class="grow"><b style="font-size:17px">You\'ve been studying for a while.</b><p class="muted small" style="margin:2px 0 12px">Take a 5-minute movement break. Walk, stretch, mobility or a short exercise.</p><div class="row wrap"><button class="btn btn-mint btn-sm" data-act="bannerStart">Start 5-Minute Break</button><button class="btn btn-line btn-sm" data-act="bannerLater">Later</button></div></div></div>';
+  $('#banner-slot').appendChild(b);ui.demoSeen.study=true;notify('StudyBreak: time for a 5-minute movement break.','cup');
+}
+
+/* ---------- ADMIN ---------- */
+function vAdmin(){
+  if(!ui.adminOK&&!S.demo)return '<div class="view-h"><h1>Welfare dashboard</h1></div><div class="card center" style="max-width:480px;margin:30px auto"><div style="font-size:40px">🔒</div><h3 style="margin:10px 0">Authorized college staff only</h3><p class="muted" style="margin-bottom:16px">This view shows grouped participation numbers for welfare teams. It never shows individual student data.</p><button class="btn btn-primary" data-act="adminOk">Continue as welfare coordinator (demo)</button></div>';
+  const add=S.acts.length&&S.demo?S.acts.filter(a=>a.date>=dk(addD(new Date(),-0))).length:0;
+  const sess=3186+add,enrolled=1240,active=412+(S.demo?1:0);
+  const weekly=[248,271,266,301,322,340,358,371+add];const labs=[];for(let w=7;w>=0;w--){const s=addD(weekStart(),-7*w);labs.push(w===0?'Now':s.getDate()+' '+MON[s.getMonth()]);}
+  const pop=[['Walking',38],['Cycling',17],['Sports',16],['Yoga / stretching',12],['Running',9],['Gym',8]];
+  const groups=[['CSE B',38,44,412],['CSE A',35,42,388],['ECE A',31,40,301],['IT A',28,38,254],['ME A',22,41,203],['EEE A',19,36,176],['CE A',14,39,131],['Photography Club',3,12,9]];
+  return '<div class="view-h"><h1>Welfare dashboard</h1><p class="muted">Nova Institute of Technology · demo data</p></div>'
+  +'<div class="notice primary" style="margin-bottom:16px"><span>'+ico('lock',20)+'</span><span><b>Privacy by design.</b> Only aggregated numbers are shown. Groups with fewer than 5 students are hidden, and no health, body or individual activity details are ever exposed.</span></div>'
+  +'<div class="grid g4"><div class="card sm"><div class="stat"><b>'+active+'</b><span class="small muted">active participants</span></div></div><div class="card sm"><div class="stat"><b>'+Math.round(active/enrolled*100)+'%</b><span class="small muted">participation rate</span></div></div><div class="card sm"><div class="stat"><b data-count="'+sess+'" data-key="sess">'+sess.toLocaleString()+'</b><span class="small muted">total activity sessions</span></div></div><div class="card sm"><div class="stat"><b>71%</b><span class="small muted">challenge completion rate</span></div></div></div>'
+  +'<div class="grid g2" style="margin-top:16px"><section class="card"><h3>Weekly activity trend</h3><p class="small muted">Sessions per week across the college</p>'+bars(weekly,labs,{hi:7,h:110,label:'Weekly sessions'})+'</section>'
+  +'<section class="card"><h3 style="margin-bottom:14px">Most popular activities</h3><div class="stack" style="gap:12px">'+pop.map(p=>'<div class="hbar"><span>'+p[0]+'</span><div class="bar"><i style="width:'+p[1]/38*100+'%"></i></div><b style="text-align:right">'+p[1]+'%</b></div>').join('')+'</div></section></div>'
+  +'<section class="card" style="margin-top:16px"><h3 style="margin-bottom:8px">School/College and team participation</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Group</th><th>Participants</th><th>Participation</th><th>Sessions</th></tr></thead><tbody>'+groups.map(g=>g[1]<5?'<tr><td>'+g[0]+'</td><td colspan="3" class="muted">Hidden. Fewer than 5 students.</td></tr>':'<tr><td><b>'+g[0]+'</b></td><td>'+g[1]+' of '+g[2]+'</td><td><div class="bar" style="min-width:90px"><i style="width:'+Math.round(g[1]/g[2]*100)+'%"></i></div></td><td>'+g[3]+'</td></tr>').join('')+'</tbody></table></div></section>';
+}
+
+/* ---------- misc modals ---------- */
+function openBell(){
+  S.notifs.forEach(n=>n.read=false||n.read);
+  openModal('<h2 style="font-size:24px;margin-bottom:8px">Notifications</h2>'+(S.notifs.length?S.notifs.map(n=>'<div class="notif '+(n.read?'':'unread')+'"><div class="em">'+ico(n.ic||'bell',18)+'</div><div class="grow"><div>'+esc(n.t)+'</div><div class="tiny muted">'+esc(n.time)+'</div></div></div>').join(''):'<div class="empty">You are all caught up.</div>'));
+  S.notifs.forEach(n=>n.read=true);save();refresh();
+}
+function openSafety(){
+  openModal('<h2 style="font-size:26px;margin-bottom:12px">Move safely</h2><div class="stack" style="gap:12px">'
+  +[['🛑','Stop if you feel pain, dizziness or unwell.'],['💧','Stay hydrated before, during and after activity.'],['🎯','Choose activities that suit your ability and build up slowly.'],['🧑‍⚕️','Seek appropriate adult or medical help for any health concern.']].map(x=>'<div class="tile row" style="gap:14px"><span style="font-size:26px">'+x[0]+'</span><b style="font-weight:600">'+x[1]+'</b></div>').join('')
+  +'</div><p class="small muted" style="margin-top:14px">FITQUEST provides general activity ideas. It is not a medical service and does not diagnose or treat any condition.</p>');
+}
+function openBadge(id){
+  const b=BADGES.concat(EVBADGES).find(x=>x.id===id);if(!b)return;const got=S.badges[id];
+  openModal('<div class="center stack" style="align-items:center;gap:12px"><div class="badge '+(got?'':'locked')+'" style="width:auto"><div class="hex" style="--bc:'+b.c+';width:96px;height:108px;font-size:44px">'+b.e+'</div></div><h2>'+esc(b.n)+'</h2><p class="muted">'+esc(b.d)+'</p><span class="pill '+(got?'mint':'')+'">'+(got?'Earned '+fmtDate(got):'Not earned yet')+'</span></div>');
+}
+function openPoints(){
+  const rows=S.ledger.slice(-12).reverse();
+  openModal('<h2 style="font-size:26px">Points</h2><p class="muted" style="margin-bottom:12px">Total <b>'+totalPts().toLocaleString()+'</b> · This week <b>'+weekPts()+'</b></p><div>'+rows.map(l=>'<div class="act-row"><div class="grow"><b>'+esc(l.why)+'</b><div class="small muted">'+fmtDate(l.d)+'</div></div><span class="pill sun">+'+l.pts+'</span></div>').join('')+'</div><div class="tile small" style="margin-top:14px"><b>How points work</b><br>Activity: 10 + minutes (max 100) · Daily challenge: +30 · Streak bonus: up to +50 · StudyBreak: +20 · Join event: +30</div>');
+}
+function openNewTeam(){
+  openModal('<h2 style="font-size:26px;margin-bottom:14px">Create a challenge</h2><div class="stack" style="gap:14px"><div class="field"><label for="n-name">Challenge name</label><input id="n-name" maxlength="50" value="'+esc(S.user.cls)+' – 7 Day Activity Challenge"></div><div class="grid" style="grid-template-columns:1fr 1fr;gap:12px"><div class="field"><label for="n-days">Length</label><select id="n-days"><option value="3">3 days</option><option value="7" selected>7 days</option><option value="14">14 days</option></select></div><div class="field"><label for="n-target">Team target (activities)</label><select id="n-target"><option>20</option><option selected>40</option><option>80</option></select></div></div><p class="small muted">Teams win together. Every member\'s activity counts toward one shared target.</p><button class="btn btn-primary btn-lg" data-act="createTeam">Create and join</button></div>');
+}
+function openDirector(){
+  const steps=[['Student dashboard','Go to Home','dHome'],['Daily challenge','Complete the next challenge','dChallenge'],['Activity logging','Log a 25-minute walk','dLog'],['Points increasing','See the points history','dPoints'],['Badge unlocked','Open the badge case','dBadge'],['Leaderboard changing','Open it and simulate classmates','dBoard'],['Weekly progress chart','Open Insights','dInsights'],['AI recommendation','Ask "I have only 15 minutes today."','dAI'],['StudyBreak feature','Trigger the break nudge','dBreak'],['College and admin dashboard','Open the welfare view','dAdmin']];
+  openModal('<h2 style="font-size:26px">Demo controls</h2><p class="muted small" style="margin:4px 0 12px">A 3 to 5 minute walkthrough. Tap each step in order.</p><div>'+steps.map((s,i)=>'<div class="dir-item '+(ui.demoSeen['d'+i]?'ok':'')+'"><div class="dir-n">'+(ui.demoSeen['d'+i]?'✓':i+1)+'</div><div class="grow"><b>'+s[0]+'</b><div class="small muted">'+s[1]+'</div></div><button class="btn btn-sm btn-primary" data-act="'+s[2]+'" data-n="'+i+'">Show</button></div>').join('')+'</div>'
+  +'<div class="row between" style="margin:16px 0 4px;gap:12px"><div><b>Demo speed</b><div class="small muted">1 second counts as 1 minute in timers</div></div><button class="sw" role="switch" aria-checked="'+!!S.set.fast+'" aria-label="Demo speed" data-act="toggle" data-k="fast" data-close="1"></button></div><button class="btn btn-line btn-block" style="margin-top:12px" data-act="resetDemo">Reset demo data</button>','');
+}
+
+/* ---------- router / render ---------- */
+const VIEWS={home:vHome,activities:vActivities,challenges:vChallenges,leaderboard:vLeaderboard,insights:vInsights,profile:vProfile,coach:vCoach,studybreak:vStudy,admin:vAdmin};
+function render(){
+  const y=window.scrollY,root=$('#root');
+  if(route==='landing')root.innerHTML=vLanding();
+  else if(route==='auth')root.innerHTML=vAuth();
+  else if(route==='onboard')root.innerHTML=vOnboard();
+  else root.innerHTML=shell(VIEWS[route]());
+  if(route==='landing')heroLoop();
+  afterRender();
+  window.scrollTo(0,y);
+}
+function afterRender(){
+  $$('[data-count]').forEach(n=>{const to=+n.dataset.count,key=n.dataset.key,from=prev[key]!=null?prev[key]:to;prev[key]=to;
+    if(from!==to&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const t0=performance.now();const step=t=>{const p=clamp((t-t0)/900,0,1);const v=Math.round(from+(to-from)*(1-Math.pow(1-p,3)));n.textContent=v.toLocaleString();if(p<1)requestAnimationFrame(step);};requestAnimationFrame(step);}});
+  if(route==='coach')paintChat();
+}
+function refresh(){if(S&&VIEWS[route])render();}
+function go(v){
+  route=v;if(v==='landing'){clearTimeout(heroTimer);}
+  if(v==='coach'&&!ui.chat&&S)coachInit();
+  render();window.scrollTo(0,0);
+}
+function applyTheme(t){if(t){document.documentElement.dataset.theme=t;store.set('fq_theme',t);}}
+function startSession(demo){
+  if(demo){S=makeDemo();schoolize(S);SESSION='demo';ui=Object.assign(ui,{chat:null,demoSeen:{},lbScope:'college',lbMetric:'week',chTab:'daily',actTab:'lib'});clock.since=0;clock.study=0;clock.studyOn=false;dailyChallenges();evalBadges();
+    // keep demo streak badge locked until the live moment
+    delete S.badges.streak7;go('home');setTimeout(()=>toast('Demo mode: sample student data loaded'),400);}
+}
+
+/* ---------- actions ---------- */
+const A={
+ go(d){ui.actTab=ui.actTab;go(d.v);},
+ toLanding(){go('landing');},
+ toAuth(d){ui.authTab=d.v||'signup';ui.authErr='';go('auth');},
+ authTab(d){ui.authTab=d.v;ui.authErr='';render();},
+ authSubmit(){authSubmit();},
+ startDemo(){startSession(true);},
+ adminFromLanding(){startSession(true);ui.demoSeen.d9=true;go('admin');},
+ adminOk(){ui.adminOk=true;ui.adminOK=true;render();},
+ obPick(d){const q=OB[ui.obStep],i=+d.i;if(q.multi){const a=ui.ob.prefs||[];const o=q.opts[i];ui.ob.prefs=a.includes(o)?a.filter(x=>x!==o):a.concat(o);}else ui.ob[q.k]=q.vals?q.vals[i]:q.opts[i];render();},
+ obNext(){if(ui.obStep<OB.length-1){ui.obStep++;render();}else finishOnboard();},
+ obBack(){if(ui.obStep>0){ui.obStep--;render();}},
+ redoOnboard(){ui.ob={age:S.user.age,level:S.user.level,prefs:S.user.prefs.slice(),minutes:S.user.minutes,env:S.user.env,goal:S.user.goal};ui.obStep=0;go('onboard');},
+ theme(){applyTheme(isDark()?'light':'dark');render();},
+ setTheme(d){applyTheme(d.v);render();},
+ bell(){openBell();},safety(){openSafety();},director(){openDirector();},
+ closeModal(){closeModal();},
+ scrim(d,e){if(e.target===e.currentTarget)closeModal();},
+ coachOpen(){go('coach');},
+ start(){openStart();},
+ startManual(){openStart({manual:true});},
+ startPlan(){const b=coachPlan(S.user.minutes,{gentle:S.mood[TODAY()]==='tired'})[0];openStart({type:b.type,goal:b.min});},
+ libOpen(d){openLib(d.id);},
+ libStart(d){const a=LIB.find(x=>x.id===d.id);closeModal();openStart({type:a.type,goal:a.min});},
+ cat(d){ui.cat=d.v;render();},
+ actTab(d){ui.actTab=d.v;render();},
+ trend(d){ui.trend=d.v;render();},
+ goLog(){ui.actTab='log';go('activities');},
+ stType(d){st0.type=d.v;drawStart();},stGoal(d){st0.goal=+d.v;drawStart();},stTab(d){st0.tab=d.v;drawStart();},
+ runStart(){st0.phase='run';st0.t0=Date.now();st0.acc=0;st0.paused=false;drawStart();clearInterval(runTimer);runTimer=setInterval(runTick,500);},
+ runPause(){if(st0.paused){st0.t0=Date.now();st0.paused=false;}else{st0.acc+=(Date.now()-st0.t0)*speed();st0.paused=true;}drawStart();},
+ runFinish(){const el=(st0.acc+(st0.paused?0:(Date.now()-st0.t0)*speed()))/60000;const type=st0.type;stopRun();const res=logActivity({type,min:Math.max(1,Math.round(el)),src:'timer',quiet:true});closeModal();reward(res);ui.demoSeen.d2=true;},
+ runDiscard(){stopRun();closeModal();},
+ manualSave(){const min=+($('#m-min')||{}).value,dist=parseFloat(($('#m-dist')||{}).value),date=($('#m-date')||{}).value||TODAY();if(!(min>=1)){toast('Enter a duration of at least 1 minute');return;}
+   const res=logActivity({type:st0.type,min,dist:isNaN(dist)?null:dist,date,src:'manual',quiet:true});closeModal();reward(res);},
+ doChallenge(d){const res=completeChallenge(d.id);if(!res)return;toast('Challenge done: +'+res.pts+' points','sun');confetti();if(res.rankAfter<res.rankBefore)setTimeout(()=>toast('You moved up to #'+res.rankAfter+' on the leaderboard'),700);if(res.newB.length)setTimeout(()=>showBadgeUnlock(res.newB),900);save();refresh();},
+ mood(d){S.mood[TODAY()]=d.v;if(!(S.cdone[TODAY()]||[]).length){delete S.daily[TODAY()];dailyChallenges();}save();render();},
+ studyToggle(){clock.studyOn=!clock.studyOn;if(clock.studyOn){clock.study=0;clock.since=0;toast('Study session started. We will nudge you to take a break.');}render();},
+ breakOpen(){openBreak();},
+ brkOpt(d){brk.opt=d.v;drawBreak();},
+ brkStart(){brk.phase='run';brk.left=300;drawBreak();clearInterval(brk.timer);brk.timer=setInterval(brkTick,1000);},
+ brkSkip(){finishBreak(true);},
+ bannerStart(){$('#banner-slot').innerHTML='';openBreak();},
+ bannerLater(){$('#banner-slot').innerHTML='';clock.since=Math.max(0,S.set.breakEvery-10);toast('OK, we will remind you in about 10 minutes');},
+ chTab(d){ui.chTab=d.v;render();},
+ joinTeam(d){const t=S.teams.find(x=>x.id===d.id);t.joined=true;t.members.push({nick:S.user.nick,n:0,me:true});const nb=evalBadges();notify('You joined '+t.name,'users');toast('You joined '+t.name);if(nb.length)setTimeout(()=>showBadgeUnlock(nb),700);save();render();},
+ leaveTeam(d){const t=S.teams.find(x=>x.id===d.id);t.joined=false;t.members=t.members.filter(m=>!m.me);save();render();},
+ newTeam(){openNewTeam();},
+ createTeam(){const name=($('#n-name')||{}).value.trim()||'New challenge',days=+$('#n-days').value,target=+$('#n-target').value;const end=new Date();end.setDate(end.getDate()+days);end.setHours(23,59,0,0);
+   S.teams.unshift({id:uid(),name,cls:S.user.cls,start:Date.now(),end:end.getTime(),target,done:0,pts:0,members:[{nick:S.user.nick,n:0,me:true}],joined:true,mine:true});const nb=evalBadges();closeModal();toast('Challenge created. Invite your class!');if(nb.length)setTimeout(()=>showBadgeUnlock(nb),600);save();render();},
+ joinEvent(){if(S.event.joined){go('challenges');return;}S.event.joined=true;addPts(30,'Joined '+S.event.name);const nb=evalBadges();ui.chTab='event';toast('+30 points for joining the event','sun');if(nb.length)setTimeout(()=>showBadgeUnlock(nb),700);save();go('challenges');},
+ goEvent(){ui.chTab='event';go('challenges');},
+ lbScope(d){ui.lbScope=d.v;render();},lbMetric(d){ui.lbMetric=d.v;render();},
+ simPeers(){bumpPeers(9,18,70);redrawLB(true);toast('Classmates are moving. You are #'+myRank());ui.demoSeen.d5=true;},
+ toggle(d){S.set[d.k]=!S.set[d.k];save();if(d.close){closeModal();openDirector();}else render();},
+ saveProfile(){const u=S.user;const nick=($('#p-nick').value||'').trim();if(nick.length<3){toast('Nickname needs at least 3 characters');return;}
+   u.nick=nick;u.name=$('#p-name').value.trim();u.school=$('#p-school').value.trim()||'-';schoolize(S,1);u.goal=$('#p-goal').value;u.weeklyGoal=(GOALS.find(g=>g.n===u.goal)||GOALS[1]).w;u.minutes=+$('#p-min').value;
+   const me=S.teams.flatMap(t=>t.members).filter(m=>m.me);me.forEach(m=>m.nick=nick);save();toast('Profile saved');render();},
+ testReminder(){toast('Reminder: your daily challenges are ready');notify('Test reminder: your daily challenges are ready.','bell');refresh();},
+ resetDemo(){closeModal();while($('#layer').lastElementChild)$('#layer').lastElementChild.remove();startSession(true);},
+ logout(){store.del('fq_session');SESSION=null;S=null;ui.chat=null;go('landing');},
+ badgeInfo(d){openBadge(d.id);},
+ chip(d){askCoach(d.v);},
+ chatSend(){const i=$('#chatIn');if(!i)return;const v=i.value;i.value='';askCoach(v);},
+ coachStart(d){const m=ui.chat[+d.i];if(m&&m.blocks)openStart({type:m.blocks[0].type,goal:m.blocks[0].min});},
+ /* demo director */
+ dHome(d){closeModal();ui.demoSeen.d0=true;go('home');},
+ dChallenge(d){const left=dailyChallenges().find(c=>!(S.cdone[TODAY()]||[]).includes(c.id));closeModal();ui.demoSeen.d1=true;go('home');if(!left){toast('All of today\'s challenges are done');return;}setTimeout(()=>A.doChallenge({id:left.id}),350);},
+ dLog(d){closeModal();ui.demoSeen.d2=true;go('home');setTimeout(()=>{const res=logActivity({type:'walking',min:25,src:'manual',quiet:true});reward(res);},350);},
+ dPoints(d){closeModal();ui.demoSeen.d3=true;openPoints();},
+ dBadge(d){closeModal();ui.demoSeen.d4=true;go('profile');setTimeout(()=>{const el=$$('.badges')[0];if(el)el.scrollIntoView({block:'center'});},100);},
+ dBoard(d){closeModal();ui.demoSeen.d5=true;go('leaderboard');setTimeout(()=>{A.simPeers();},600);},
+ dInsights(d){closeModal();ui.demoSeen.d6=true;go('insights');},
+ dAI(d){closeModal();ui.demoSeen.d7=true;if(!ui.chat)coachInit();go('coach');setTimeout(()=>askCoach('I have only 15 minutes today.'),400);},
+ dBreak(d){closeModal();ui.demoSeen.d8=true;go('home');clock.since=S.set.breakEvery+1;setTimeout(showBreakBanner,300);},
+ dAdmin(d){closeModal();ui.demoSeen.d9=true;ui.adminOK=true;go('admin');}
+};
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b||b.disabled)return;
+  const fn=A[b.dataset.act];if(fn){fn(b.dataset,e);}
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='q'){ui.q=e.target.value;const l=$('#libList');if(l)l.innerHTML=libList();}
+});
+document.addEventListener('change',e=>{
+  const k=e.target.dataset&&e.target.dataset.change;if(k&&S){S.set[k]=k==='breakEvery'?+e.target.value:e.target.value;save();toast('Saved');}
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&$('#layer').lastElementChild)closeModal();
+  if(e.key==='Enter'&&e.target.id==='chatIn'){e.preventDefault();A.chatSend();}
+  if(e.key==='Enter'&&route==='auth'&&/^a-/.test(e.target.id||''))authSubmit();
+});
+
+/* ---------- global tick: StudyBreak nudge, countdowns ---------- */
+setInterval(()=>{
+  if(!S||!VIEWS[route])return;
+  const sp=speed()/60;
+  clock.since+=sp;if(clock.studyOn)clock.study+=sp;
+  const sc=$('#studyClock');if(sc)sc.textContent=fmtClock(clock.study*60);
+  if(route==='challenges'&&ui.chTab==='event'){const cd=Math.max(0,S.event.end-Date.now());const v={d:Math.floor(cd/86400000),h:Math.floor(cd%86400000/3600000),m:Math.floor(cd%3600000/60000),s:Math.floor(cd%60000/1000)};$$('[data-cd]').forEach(n=>n.textContent=pad(v[n.dataset.cd]));}
+  if(S.set.remBreak&&clock.since>=S.set.breakEvery&&!$('.banner')&&!$('#layer').lastElementChild){clock.since=0;showBreakBanner();}
+},1000);
+
+/* ===== FITQUEST v2 EXTENSION: school/college, reset flow, live board, AI plan, score, rewards, events+QR, certificate, demo ===== */
+const SCHOOLS=['ABC College','DRIEMS Polytechnic','XYZ College','Greenfield Institute','Sunrise School'];
+function schoolize(s,force){const u=s.user;delete u.department;
+ if(!u.school)u.school=(u.email==='demo@fitquest.app')?'DRIEMS Polytechnic':'-';
+ u.dept='ALL';u.cls=u.school;
+ s.peers.forEach((p,i)=>{if(force||!p.school){p.school=i<6?u.school:SCHOOLS[i%SCHOOLS.length];p.cls=p.school;p.dept='ALL';}});
+ s.camp=s.camp||{};s.rw=s.rw||{c:[]};s.seenR=s.seenR||{};}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const fmt=n=>Number(n).toLocaleString();
+/* ---- password reset (PROTOTYPE: no email is sent) ---- */
+let RESET={};
+A.forgot=()=>{RESET={};openModal('<h2 style="font-size:24px">Reset password</h2><p class="small muted">Prototype reset: FITQUEST has no email server, so a demo code is shown on screen instead of being emailed.</p><div class="field" style="margin:14px 0"><label for="r-email">Registered email</label><input id="r-email" type="email"></div><div class="err" id="r-err" role="alert"></div><button class="btn btn-primary btn-block" data-act="rstStep1">Continue</button>');};
+A.rstStep1=()=>{const e=$('#r-email').value.trim().toLowerCase(),acc=store.get('fq_accounts')||{};
+ if(!acc[e]){$('#r-err').textContent='No account was found with this email. Please check the email or create a new account.';return;}
+ RESET={e,code:String(100000+Math.floor(Math.random()*900000))};closeModal();
+ openModal('<h2 style="font-size:24px">Verify & set new password</h2><div class="card" style="background:var(--surface2);margin:12px 0"><span class="tiny muted">DEMO VERIFICATION CODE (no email was sent)</span><b style="display:block;font-size:28px;letter-spacing:6px">'+RESET.code+'</b></div><div class="stack" style="gap:12px"><div class="field"><label for="r-code">6-digit code</label><input id="r-code" inputmode="numeric" maxlength="6"></div><div class="field"><label for="r-p1">New password</label><input id="r-p1" type="password" autocomplete="new-password"></div><div class="field"><label for="r-p2">Confirm new password</label><input id="r-p2" type="password" autocomplete="new-password"></div><div class="err" id="r-err" role="alert"></div><button class="btn btn-primary btn-block" data-act="rstStep2">Save new password</button></div>');};
+A.rstStep2=async()=>{const v=id=>$('#'+id).value,er=m=>$('#r-err').textContent=m;
+ if(v('r-code')!==RESET.code)return er('That code is not correct.');
+ if(v('r-p1').length<6)return er('Password needs at least 6 characters.');
+ if(v('r-p1')!==v('r-p2'))return er('Passwords do not match.');
+ const acc=store.get('fq_accounts')||{};acc[RESET.e]={h:await pwHash(v('r-p1'))};store.set('fq_accounts',acc);
+ closeModal();ui.authTab='login';go('auth');toast('Password updated. Please log in.');};
+A.chgPw=()=>openModal('<h2 style="font-size:24px">Change password</h2><div class="stack" style="gap:12px;margin-top:12px"><div class="field"><label for="c-0">Current password</label><input id="c-0" type="password"></div><div class="field"><label for="c-1">New password</label><input id="c-1" type="password"></div><div class="field"><label for="c-2">Confirm new password</label><input id="c-2" type="password"></div><div class="err" id="r-err" role="alert"></div><button class="btn btn-primary btn-block" data-act="chgPw2">Update password</button></div>');
+A.chgPw2=async()=>{const v=id=>$('#'+id).value,er=m=>$('#r-err').textContent=m,acc=store.get('fq_accounts')||{};
+ if(!acc[SESSION]||acc[SESSION].h!==await pwHash(v('c-0')))return er('Current password is not correct.');
+ if(v('c-1').length<6)return er('New password needs at least 6 characters.');if(v('c-1')!==v('c-2'))return er('Passwords do not match.');
+ acc[SESSION]={h:await pwHash(v('c-1'))};store.set('fq_accounts',acc);closeModal();toast('Password changed');};
+/* ---- FITQUEST score (activity-only, non-medical) ---- */
+function fqScore(){const wk=weekDays().reduce((a,b)=>a+b,0),g=S.user.weeklyGoal||150;let d14=0;for(let i=0;i<14;i++)if(minsOn(dk(addD(new Date(),-i)))>0)d14++;
+ const c={Consistency:d14/14,'Active minutes':Math.min(1,wk/g),Challenges:Math.min(1,chTotal()/30),Streak:Math.min(1,streak()/14),Participation:Math.min(1,(Object.keys(S.camp).length+S.acts.length/10)/5)};
+ const w=[.3,.25,.15,.15,.15];const sc=Math.round(Object.values(c).reduce((s,v,i)=>s+v*w[i],0)*100);return{sc,c,wk,g,pct:Math.min(1,wk/g)};}
+const monthPts=()=>{const f=dk(addD(new Date(),-30));return S.ledger.filter(l=>l.d>=f&&l.pts>0).reduce((s,l)=>s+l.pts,0);};
+function scoreCard(){const f=fqScore();return '<section class="card"><h3>💯 FITQUEST Score</h3><div class="row wrap" style="gap:18px;margin-top:10px">'+ring(f.sc/100,{size:120,sw:12})+'<div class="grow"><b style="font-size:34px;font-family:var(--font-display)">'+f.sc+' / 100</b><div class="stack" style="gap:6px;margin-top:6px">'+Object.entries(f.c).map(([k,v])=>'<div class="small"><span class="muted">'+k+'</span><div class="pbar"><i style="width:'+Math.round(v*100)+'%"></i></div></div>').join('')+'</div></div></div><p class="tiny muted" style="margin-top:10px">Your Fitness Score reflects your activity and consistency. It is not a medical score.</p></section>';}
+/* ---- AI personal plan (rule-based, local) ---- */
+function buildPlan(){const u=S.user,m=u.minutes||20,prefs=u.prefs||[],seed=ui.planSeed||0,out=/outdoor/i.test(u.env),ind=/indoor/i.test(u.env);
+ const easy=/seated|light/i.test(u.level||'')||streak()<3;const map={Walking:'walking',Running:'running',Cycling:'cycling',Sports:'sports','Yoga & stretching':'yoga',Gym:'gym'};
+ let mainT=(prefs.map(p=>map[p]).filter(Boolean)).filter(t=>!(ind&&['running','cycling'].includes(t)))[seed%Math.max(1,prefs.length)]||(ind?'yoga':'walking');
+ const a=Math.round(m*.5),b=Math.round(m*.25),c=Math.max(1,m-a-b);
+ return{mins:m,pts:Math.min(100,10+a)+Math.min(100,10+b)+Math.min(100,10+c),blocks:[{type:mainT,min:a,l:easy?'easy pace':'steady pace'},{type:'yoga',min:b,l:'stretching'},{type:easy?'walking':'other',min:c,l:'light activity'}]};}
+function planCard(){const p=buildPlan(),h=new Date().getHours(),g=h<12?'MORNING':h<18?'AFTERNOON':'EVENING';
+ return '<section class="card" style="background:linear-gradient(135deg,var(--primary),#6a5cff);color:#fff"><span class="tiny">🤖 AI PERSONAL FITNESS PLAN</span><h2 style="font-size:24px;margin:6px 0">GOOD '+g+', '+esc(S.user.nick.toUpperCase())+' 👋</h2><p class="small">You have '+p.mins+' minutes available today.</p><div class="stack" style="gap:6px;margin:12px 0">'+p.blocks.map(b=>'<div>'+TYPES[b.type].e+' <b>'+b.min+' min</b> '+TYPES[b.type].n+' · '+b.l+'</div>').join('')+'</div><p class="small">Estimated duration: '+p.mins+' min · Potential points: <b>+'+p.pts+'</b></p><p class="tiny" style="opacity:.85">General wellness suggestion, not medical advice.</p><div class="row wrap" style="gap:8px;margin-top:10px"><button class="btn btn-sun btn-sm" data-act="planStart">Start Plan</button><button class="btn btn-line btn-sm" data-act="planChange">Change Plan</button><button class="btn btn-line btn-sm" data-act="go" data-v="coach">Ask AI Coach</button></div></section>';}
+A.planChange=()=>{ui.planSeed=(ui.planSeed||0)+1;notify('🤖 Your AI fitness plan is ready.','spark');render();toast('New plan generated');};
+A.planStart=()=>{const p=buildPlan();openModal('<h2 style="font-size:24px">Your plan</h2><div class="stack" style="gap:8px;margin:12px 0">'+p.blocks.map(b=>'<label class="row" style="gap:10px"><input type="checkbox" checked disabled> '+TYPES[b.type].e+' '+b.min+' min '+TYPES[b.type].n+'</label>').join('')+'</div><p class="small muted">Do the activities at your own pace, then confirm.</p><button class="btn btn-primary btn-block" data-act="planDone">I completed the plan</button>');};
+A.planDone=()=>{const p=buildPlan();closeModal();let last;p.blocks.forEach(b=>{last=logActivity({type:b.type,min:b.min,src:'manual',quiet:true});});notify('⭐ You earned '+p.pts+' points!','spark');confetti();toast('Plan complete! +'+p.pts+' points');render();};
+/* ---- HOME upgrade (wraps existing home) ---- */
+const _home=vHome;
+VIEWS.home=()=>{const f=fqScore(),h=new Date().getHours(),g=h<12?'Morning':h<18?'Afternoon':'Evening',todayM=minsOn(TODAY()),rk=myRank('class','week'),rg=myRank('college','week');
+ const st=(e,l,v)=>'<div class="card" style="padding:14px"><span class="small muted">'+e+' '+l+'</span><b style="display:block;font-size:26px;font-family:var(--font-display)">'+v+'</b></div>';
+ return '<div class="view-h"><h1>Good '+g+', '+esc(S.user.nick)+' 👋</h1><button class="btn btn-sun btn-sm" data-act="runDemo">🎬 Run Demo</button></div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">'
+ +st('🔥','Current Streak',streak()+' days')+st('🏃','Active Minutes',f.wk+' /wk')+st('🎯','Goal Completion',Math.round(f.pct*100)+'%')+st('⭐','Total Points',fmt(totalPts()))+st('💯','FITQUEST Score',f.sc)+'</div>'
+ +'<div class="grid g2" style="margin-top:16px">'+planCard()+scoreCard()+'</div>'
+ +'<section class="card" style="margin-top:16px"><h3>Leaderboard position</h3><p class="muted small">#'+rk+' in '+esc(S.user.school)+' · #'+rg+' Global</p><button class="btn btn-line btn-sm" data-act="go" data-v="leaderboard">View leaderboard</button></section>'
+ +'<div class="row wrap" style="gap:8px;margin:16px 0"><button class="btn btn-primary" data-act="start">Start Activity</button><button class="btn btn-line" data-act="start">Log Activity</button><button class="btn btn-line" data-act="go" data-v="coach">AI Coach</button><button class="btn btn-line" data-act="go" data-v="challenges">Challenges</button><button class="btn btn-line" data-act="go" data-v="events">Campus Events</button></div>'
+ +_home();};
+/* ---- LIVE leaderboard (adapter-based: swap LBSource for Firebase/Supabase) ---- */
+const LBSource={ // local prototype source. Replace fetch() with a real backend call later.
+ fetch(){return S.peers.map(p=>Object.assign({},p,{mins:Math.round(p.week*1.3),month:Math.round(p.week*3.4)}));}};
+let lbUpdated=Date.now();
+function lbBoard(){const me={id:'me',me:true,nick:myName(),school:S.user.school,week:weekPts(),total:totalPts(),month:monthPts(),ch:chTotal(),streak:streak(),mins:weekDays().reduce((a,b)=>a+b,0)};
+ let rows=LBSource.fetch().concat([me]);if(ui.lbS!=='global')rows=rows.filter(r=>r.school===S.user.school);
+ const k=ui.lbM||'week';rows.sort((a,b)=>b[k]-a[k]);rows.forEach((r,i)=>{r.rank=i+1;r.fs=Math.min(99,Math.round(r.streak*3+r.mins/8+r.ch/3));});return rows;}
+function lbHtml(){const k=ui.lbM||'week';return lbBoard().slice(0,12).map(r=>'<div class="lb-row '+(r.me?'me':'')+'"><div class="lb-rank">'+(r.rank<=3?['🥇','🥈','🥉'][r.rank-1]:r.rank)+'</div><div class="row" style="gap:10px;min-width:0">'+avatar(r.nick)+'<div style="min-width:0"><b>'+esc(r.nick)+(r.me?' (you)':'')+'</b><div class="meta"><span>'+esc(r.school)+'</span><span>'+r.mins+' min</span><span>🔥 '+r.streak+' day streak</span><span>Score '+r.fs+'</span></div></div></div><div class="lb-pts">'+fmt(r[k])+'<div class="tiny muted">pts</div></div></div>').join('');}
+VIEWS.leaderboard=()=>{const b=(a,v,l)=>'<button role="tab" aria-selected="'+(a===v)+'" data-act="lbF" data-k="'+(a===ui.lbS||a===ui.lbM?'':'')+'" data-f="'+v+'">'+l+'</button>';
+ const sc=ui.lbS||'school',mt=ui.lbM||'week',seg=(items,cur,key)=>'<div class="seg" role="tablist">'+items.map(i=>'<button role="tab" aria-selected="'+(cur===i[0])+'" data-act="lbF" data-key="'+key+'" data-v="'+i[0]+'">'+i[1]+'</button>').join('')+'</div>';
+ return '<div class="view-h"><h1>🏆 FITQUEST Leaderboard</h1><span class="pill" style="background:#0FA57A22;color:#0FA57A"><span class="livedot"></span> LIVE</span></div><p class="small muted">Last updated: <b id="lbTime">Just now</b> · Prototype: peers are simulated locally; your rank updates instantly.</p><div class="row wrap" style="gap:10px;margin:12px 0">'+seg([['school','My School/College'],['global','Global']],sc,'lbS')+seg([['week','Weekly'],['month','Monthly'],['total','All Time']],mt,'lbM')+'<button class="btn btn-line btn-sm" data-act="lbSim">⚡ Simulate live activity</button></div><section class="card"><div id="lbList" class="stack" style="gap:8px">'+lbHtml()+'</div></section>';};
+A.lbF=d=>{ui[d.key]=d.v;render();};
+A.lbSim=()=>{const before=myRank('college','week');bumpPeers(6,20,60);lbUpdated=Date.now();render();toast('Classmates are moving! You are #'+lbBoard().find(r=>r.me).rank);};
+setInterval(()=>{if(!S||route!=='leaderboard')return;bumpPeers(1,3,12);lbUpdated=Date.now();const l=$('#lbList');if(l)l.innerHTML=lbHtml();},7000);
+setInterval(()=>{const t=$('#lbTime');if(t){const s=Math.round((Date.now()-lbUpdated)/1000);t.textContent=s<5?'Just now':s+'s ago';}},1000);
+/* ---- REWARDS ---- */
+const REWARDS=[[500,'📜','Digital Fitness Certificate','A certificate with your name, minutes and points.'],[1000,'🏅','Achievement Badge','A showcase badge on your profile.'],[1500,'🎓','College Recognition','Featured on the campus recognition list (demo).'],[2000,'🎟️','Fitness Event Pass','Priority entry to a campus fitness event (demo).']];
+VIEWS.rewards=()=>{const p=totalPts();return '<div class="view-h"><h1>🎁 Reward Center</h1><span class="stat-chip">⭐ '+fmt(p)+'</span></div><p class="small muted">Earn points from activities, daily challenges, streaks, events and milestones. Rewards are prototype rewards.</p><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:12px">'+REWARDS.map((r,i)=>{const got=S.rw.c.find(x=>x.i===i);return '<section class="card"><div style="font-size:34px">'+r[1]+'</div><h3>'+r[2]+'</h3><p class="small muted">'+r[3]+'</p><b>'+fmt(r[0])+' points</b><div class="pbar"><i style="width:'+Math.min(100,p/r[0]*100)+'%"></i></div>'+(got?'<button class="btn btn-line btn-block btn-sm" data-act="certOpen" data-i="'+i+'">'+(i===0?'View / download':'Redeemed ✓')+'</button>':'<button class="btn btn-primary btn-block btn-sm" data-act="redeem" data-i="'+i+'" '+(p<r[0]?'aria-disabled="true" style="opacity:.55"':'')+'>Redeem</button>')+'</section>';}).join('')+'</div>'
+ +'<section class="card" style="margin-top:16px"><h3>Points history</h3><div class="stack small" style="gap:6px;margin-top:8px">'+S.ledger.slice(-8).reverse().map(l=>'<div class="row between"><span>'+esc(l.why)+'</span><b>'+(l.pts>0?'+':'')+l.pts+'</b></div>').join('')+'</div></section>';};
+A.redeem=d=>{const r=REWARDS[+d.i],p=totalPts();if(p<r[0]){toast('You need '+(r[0]-p)+' more points for this reward');return;}
+ openModal('<h2 style="font-size:24px">Redeem '+r[2]+'?</h2><p class="muted">This costs '+fmt(r[0])+' points. You have '+fmt(p)+'.</p><div class="row" style="gap:8px;margin-top:14px"><button class="btn btn-primary" data-act="redeemOk" data-i="'+d.i+'">Confirm</button><button class="btn btn-line" data-act="closeModal">Cancel</button></div>');};
+A.redeemOk=d=>{const r=REWARDS[+d.i];if(totalPts()<r[0])return;addPts(-r[0],'Reward: '+r[2]);S.rw.c.push({i:+d.i,date:TODAY()});notify('🎁 '+r[2]+' redeemed!','spark');save();closeModal();confetti();toast('🎁 '+r[2]+' redeemed!');render();};
+/* ---- CERTIFICATE ---- */
+function certHtml(name,ach,mins,pts,date){return '<div style="font-family:Georgia,serif;text-align:center;border:8px double #3B4BFF;padding:36px;background:#fff;color:#1a1f3a;max-width:640px;margin:auto"><h1 style="letter-spacing:6px;color:#3B4BFF;margin:0">FITQUEST</h1><h2 style="margin:6px 0">FITNESS ACHIEVEMENT CERTIFICATE</h2><p>This certificate is awarded to</p><h1 style="font-size:36px;margin:8px 0">'+esc(name)+'</h1><p>for achieving</p><h2 style="margin:6px 0">'+esc(ach)+'</h2><p>Active Minutes: <b>'+mins+'</b> &nbsp;·&nbsp; Points: <b>'+pts+'</b></p><p>Date: '+esc(date)+'</p><p style="font-size:11px;color:#666">Prototype certificate – not an official document.</p></div>';}
+A.certOpen=()=>{const mins=S.acts.reduce((s,a)=>s+a.min,0),ach=REWARDS[S.rw.c.length?S.rw.c[S.rw.c.length-1].i:0][2]+' – '+(S.rw.c.length?'Redeemed':'Participant');
+ openModal(certHtml(S.user.name||S.user.nick,ach,mins,fmt(totalPts()),new Date().toDateString())+'<div class="row" style="gap:8px;margin-top:14px;justify-content:center"><button class="btn btn-primary" data-act="certDl">Download Certificate</button><button class="btn btn-line" data-act="certPrint">Print / PDF</button></div>','wide');};
+A.certDl=()=>{const mins=S.acts.reduce((s,a)=>s+a.min,0),h='<!doctype html><meta charset=utf-8><title>FITQUEST Certificate</title><body style="padding:30px">'+certHtml(S.user.name||S.user.nick,'Fitness Achievement',mins,fmt(totalPts()),new Date().toDateString())+'</body>',a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download='FITQUEST-Certificate.html';a.click();};
+A.certPrint=()=>{const w=window.open('','_blank');if(!w){toast('Allow pop-ups to print');return;}const mins=S.acts.reduce((s,a)=>s+a.min,0);w.document.write(certHtml(S.user.name||S.user.nick,'Fitness Achievement',mins,fmt(totalPts()),new Date().toDateString()));w.document.close();w.print();};
+/* ---- CAMPUS EVENTS + QR (prototype verification) ---- */
+const EVENTS=[['walk','Campus Walk Challenge',2,'Walk 3 km',60],['inter','Inter-Class Fitness Challenge',5,'60 active min',80],['mara','College Marathon',12,'5 km run',150],['bad','Badminton Week',7,'3 matches',70],['d30','30-Day Activity Challenge',30,'20 days active',200],['wknd','Weekend Sports Challenge',3,'45 min sports',60]];
+const qrSvg=id=>{let s='',h=hashS('fq'+id);const r=rng(h);for(let y=0;y<15;y++)for(let x=0;x<15;x++){const f=(x<4&&y<4)||(x>10&&y<4)||(x<4&&y>10);if(f||r()>.55)s+='<rect x="'+x*8+'" y="'+y*8+'" width="8" height="8"/>';}return '<svg viewBox="0 0 120 120" width="150" height="150" style="background:#fff;padding:8px;border-radius:8px" fill="#111" role="img" aria-label="Demo QR code">'+s+'</svg>';};
+VIEWS.events=()=>'<div class="view-h"><h1>🏫 Campus Fitness Events</h1></div><p class="small muted">📱 QR verification is a prototype simulation (no camera scanning).</p><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:12px">'+EVENTS.map(e=>{const c=S.camp[e[0]],base=20+hashS(e[0])%90,st=!c?'':c.ver?'✅ Verified':c.done?'Activity done – verify QR':'Joined';const d=new Date(Date.now()+e[2]*864e5).toDateString();
+ return '<section class="card"><h3>'+e[1]+'</h3><p class="small muted">📅 '+d+' · 👥 '+(base+(c?1:0))+' participants</p><p class="small">Target: '+e[3]+' · <b>+'+e[4]+' pts</b></p><div class="pbar"><i style="width:'+(c?c.ver?100:c.done?90:30:0)+'%"></i></div><p class="tiny muted">'+st+'</p>'
+ +(!c?'<button class="btn btn-primary btn-sm" data-act="evJoin" data-id="'+e[0]+'">Join</button>':c.ver?'<button class="btn btn-line btn-sm" disabled>Completed</button>':!c.done?'<button class="btn btn-primary btn-sm" data-act="evDo" data-id="'+e[0]+'">Complete activity</button>':'<button class="btn btn-sun btn-sm" data-act="evQR" data-id="'+e[0]+'">📱 Scan / Verify QR</button>')+'</section>';}).join('')+'</div>';
+A.evJoin=d=>{S.camp[d.id]={joined:1};save();toast('Joined event');render();};
+A.evDo=d=>{const e=EVENTS.find(x=>x[0]===d.id);logActivity({type:'walking',min:20,src:'manual',quiet:true});S.camp[d.id].done=1;save();toast('Activity completed. Now verify at the QR point.');render();};
+A.evQR=d=>{const e=EVENTS.find(x=>x[0]===d.id);openModal('<h2 style="font-size:22px">FITQUEST '+e[1].toUpperCase()+' 2026</h2><div style="display:grid;place-items:center;margin:12px 0">'+qrSvg(d.id)+'</div><p class="tiny muted center">PROTOTYPE / DEMO: tap below to simulate scanning this QR code.</p><button class="btn btn-primary btn-block" data-act="evVerify" data-id="'+d.id+'">Simulate scan & verify</button>');};
+A.evVerify=d=>{const c=S.camp[d.id],e=EVENTS.find(x=>x[0]===d.id);if(!c||c.ver){toast('Already verified');return;}c.ver=1;addPts(e[4],'Event: '+e[1]);notify('🏆 Event verified: +'+e[4]+' points','flag');const r0=lbBoard().find(r=>r.me).rank;save();closeModal();confetti();lbUpdated=Date.now();toast('✅ Activity verified! +'+e[4]+' pts. Leaderboard updated.');render();};
+/* ---- monthly analytics (added under existing Insights) ---- */
+const _ins=vInsights;
+VIEWS.insights=()=>{const f=fqScore(),from=dk(addD(new Date(),-30)),acts=S.acts.filter(a=>a.date>=from),mins=acts.reduce((s,a)=>s+a.min,0),days=new Set(acts.map(a=>a.date)).size;
+ const wk=[3,2,1,0].map(i=>{const s=addD(weekStart(),-7*i);let t=0;for(let j=0;j<7;j++)t+=minsOn(dk(addD(s,j)));return t;});
+ const prev=S.acts.filter(a=>a.date<from&&a.date>=dk(addD(new Date(),-60))).length,ins=days>=12?'Your activity consistency is strong this month. Keep the rhythm going.':acts.length>prev?'You logged more activities than last month. Nice momentum.':'A few short sessions this week would help rebuild your routine.';
+ const st=(l,v)=>'<div class="card" style="padding:12px"><span class="tiny muted">'+l+'</span><b style="display:block;font-size:22px">'+v+'</b></div>';
+ return _ins()+'<h2 style="margin:22px 0 10px">Monthly progress</h2><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px">'+st('Active minutes',mins)+st('Active days',days)+st('Challenges done',chTotal())+st('Avg daily min',Math.round(mins/30))+st('Streak',streak()+' d')+st('Points earned',fmt(monthPts()))+'</div><section class="card" style="margin-top:14px"><h3>Active minutes by week</h3>'+bars(wk,['3w ago','2w ago','Last wk','This wk'],{h:100,hi:3,label:'Weekly active minutes'})+'<h3 style="margin-top:14px">Goal completion: '+Math.round(f.pct*100)+'%</h3><div class="pbar"><i style="width:'+Math.round(f.pct*100)+'%"></i></div><p class="small" style="margin-top:12px">🤖 '+ins+' <span class="muted">(General wellness insight, not medical advice.)</span></p></section>';};
+/* ---- profile helpers, nav, demo ---- */
+A.privSet=()=>{toast('Privacy and notification switches are in the Profile page below');};
+NAV.splice(5,0,['rewards','Rewards','spark']);
+document.head.insertAdjacentHTML('beforeend','<style>.pbar{height:8px;border-radius:8px;background:var(--surface2);overflow:hidden;margin:6px 0}.pbar i{display:block;height:100%;background:var(--primary);border-radius:8px;transition:width .6s}.livedot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#0FA57A;animation:lv 1.4s infinite}@keyframes lv{50%{opacity:.25}}.bnav{overflow-x:auto}.bnav button{min-width:64px}#demoTag{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:999;background:#E8489B;color:#fff;padding:6px 14px;border-radius:99px;font-weight:700;font-size:13px}.sheet.wide{max-width:720px}@media(prefers-reduced-motion:reduce){.livedot{animation:none}.pbar i{transition:none}}</style>');
+A.runDemo=async()=>{if(window._dm)return;window._dm=1;const tag=document.createElement('div');tag.id='demoTag';tag.textContent='🎬 DEMO MODE';document.body.appendChild(tag);
+ const step=async(m,r,ms=2600)=>{toast(m);if(r)go(r);await sleep(ms);};
+ try{startSession(true);await sleep(600);await step('1/10 Student dashboard','home');await step('2/10 AI recommendation ready','home');
+ await step('3/10 Starting activity: 20-min walk','activities',1800);
+ logActivity({type:'walking',min:20,src:'manual',quiet:true});await step('4/10 Activity completed','home',1800);
+ addPts(50,'Demo bonus');notify('⭐ You earned 50 points!','spark');await step('5/10 +50 points earned','home',1800);
+ S.badges.streak7={d:TODAY()};confetti();notify('🔥 7-day streak achieved!','flame');await step('6/10 Badge unlocked: 7-Day Streak','profile');
+ await step('7/10 FITQUEST Score updated: '+fqScore().sc,'home');
+ bumpPeers(3,20,50);lbUpdated=Date.now();await step('8/10 Leaderboard updated live','leaderboard',3000);
+ await step('9/10 Reward Center','rewards',3000);await step('10/10 Monthly analytics','insights',3000);toast('Demo finished. Thank you! 🎉');}
+ finally{tag.remove();window._dm=0;}};
+
+/* ---------- boot ---------- */
+(function boot(){
+  const th=store.get('fq_theme');if(th)document.documentElement.dataset.theme=th;
+  const sess=store.get('fq_session');
+  if(sess){const d=store.get('fq_data_'+sess);if(d&&d.user){S=d;schoolize(S);SESSION=sess;route=d.user.onboarded?'home':'onboard';if(route==='onboard'){ui.ob={prefs:[]};}
+    if(!S.set)S.set=DEFAULT_SET();dailyChallenges();}}
+  render();
+})();
+</script>
+</body>
+</html>
